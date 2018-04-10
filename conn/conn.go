@@ -3,25 +3,44 @@ package conn
 import (
 	"net"
 	"github.com/qiniu/log"
+	"fmt"
 )
 
 type Conn interface {
 	net.Conn
 	Id() string
-	//SetType(string)
+	SetType(string)
 	//CloseRead() error
 }
 
 type loggedConn struct {
 	tcp *net.TCPConn
 	net.Conn
-	//id  int32
-	//typ string
+	id  int32
+	typ string
 }
 
 type Listener struct {
 	net.Addr
 	Conns chan *loggedConn
+}
+
+func (c *loggedConn) Id() string {
+	return fmt.Sprintf("%s:%x", c.typ, c.id)
+}
+
+func (c *loggedConn) SetType(typ string) {
+	oldId := c.Id()
+	c.typ = typ
+	log.Printf("Renamed connection %s", oldId)
+}
+
+func (c *loggedConn) CloseRead() error {
+	// XXX: use CloseRead() in Conn.Join() and in Control.shutdown() for cleaner
+	// connection termination. Unfortunately, when I've tried that, I've observed
+	// failures where the connection was closed *before* flushing its write buffer,
+	// set with SetLinger() set properly (which it is by default).
+	return c.tcp.CloseRead()
 }
 
 func Listen(addr string) (l *Listener) {

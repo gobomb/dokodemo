@@ -1,6 +1,9 @@
 package main
 
-import "time"
+import (
+	"time"
+	"net"
+)
 
 type Tunnel struct {
 	// 隧道建立请求

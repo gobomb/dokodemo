@@ -106,7 +106,7 @@ func NewControl(ctlConn conn.Conn, authMsg *msg.Auth) {
 
 func (c *Control) manager() {
 	defer func() {
-		if err := recover; err != nil {
+		if err := recover(); err != nil {
 			log.Printf("Control::manager failed with error %v: %s", err, debug.Stack())
 		}
 	}()
@@ -150,7 +150,7 @@ func (c *Control) Replaced(replacement *Control) {
 
 func (c *Control) writer() {
 	defer func() {
-		if err := recover; err != nil {
+		if err := recover(); err != nil {
 			log.Printf("Control::writer failed with error %v: %s", err, debug.Stack())
 		}
 	}()
@@ -170,7 +170,7 @@ func (c *Control) writer() {
 
 func (c *Control) reader() {
 	defer func() {
-		if err := recover; err != nil {
+		if err := recover(); err != nil {
 			log.Printf("Control::reader failed with error %v: %s", err, debug.Stack())
 		}
 	}()

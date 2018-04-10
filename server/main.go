@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/qiniu/log"
-	"sync"
 	"time"
 	"runtime/debug"
 	"doko/conn"
