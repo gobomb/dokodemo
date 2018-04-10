@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "P7gR/mj56/a7m4iXH/fdFZma/oo=",
+			"path": "github.com/qiniu/log",
+			"revision": "e002bc2020b19bfa61ed378cc5407383dbd2f346",
+			"revisionTime": "2014-07-28T01:23:31Z"
+		}
+	],
+	"rootPath": "dock3"
+}
