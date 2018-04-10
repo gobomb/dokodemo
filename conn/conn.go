@@ -54,3 +54,16 @@ func Listen(addr string) (l *Listener) {
 	}()
 	return
 }
+
+func Dial(addr string) (conn *loggedConn) {
+	var rawConn net.Conn
+	rawConn, err := net.Dial("tcp", addr)
+	if err != nil {
+		log.Printf("[net.Dial error]: %v", err)
+		return
+	}
+
+	log.Printf("New connection to: %v", rawConn.RemoteAddr())
+
+	return
+}

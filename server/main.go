@@ -7,6 +7,7 @@ import (
 	"net"
 	"runtime/debug"
 	"doko/conn"
+	"doko/msg"
 )
 
 type Options struct {
@@ -140,14 +141,8 @@ func tunnelListener(addr string) {
 			//	tunnelConn.Close()
 			//	return
 			//}
-			ReadMsg(tunnelConn)
+			msg.ReadMsg(tunnelConn)
 
 		}(c)
 	}
-}
-
-func ReadMsg(c conn.Conn) {
-	var b []byte
-	c.Read(b)
-	log.Printf("[read from tcp]: %v", b)
 }

@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/qiniu/log"
-	//"doko/conn"
+	"doko/conn"
 )
 
 type Options struct {
@@ -32,15 +32,49 @@ func main() {
 		ServerAddr: "0.0.0.0:4443",
 		Tunnels:    tunnels,
 	}
-	log.Printf("%v",config)
-	control()
+	log.Printf("%v", config)
+
+	run(config)
+
 }
 
-func control() {
+func run(config *Configuration) {
+	model := newClientModel(config)
+	model.run()
+
+}
+
+func newClientModel(config *Configuration) *ClientModel {
+	return &ClientModel{
+		serverAddr: config.ServerAddr,
+		tunnels:    config.Tunnels,
+	}
+}
+
+type ClientModel struct {
+	id           string
+	tunnels      map[string]Tunnel
+	updateStatus UpdateStatus
+	connStatus   ConnStatus
+	ctl          Controller
+	serverAddr   string
+	tunnelConfig map[string]*TunnelConfiguration
+}
+
+func (c *ClientModel) run() {
+	for {
+		c.control()
+	}
+}
+
+func (c *ClientModel) control() {
 	defer func() {
 		if r := recover(); r != nil {
 			log.Printf("control recovering from failure %v", r)
 		}
 	}()
-	//var ctlConn conn.Conn
+	var ctlConn conn.Conn
+
+	ctlConn = conn.Dial(c.serverAddr)
+	defer ctlConn.Close()
 }
