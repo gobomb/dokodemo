@@ -13,7 +13,7 @@ type Options struct {
 }
 
 type ReqTunnel struct {
-	ReqId    string
+	ReqId string
 
 	// tcp only
 	RemotePort uint16
@@ -26,7 +26,6 @@ type Conn interface {
 	CloseRead() error
 }
 
-
 type Message interface{}
 
 type Shutdown struct {
@@ -37,7 +36,6 @@ type Shutdown struct {
 }
 
 type Control struct {
-
 	// actual connection
 	conn Conn
 
@@ -74,7 +72,6 @@ type Control struct {
 	shutdown *Shutdown
 }
 
-
 type Tunnel struct {
 	// 隧道建立请求
 	req *ReqTunnel
@@ -96,16 +93,51 @@ type Tunnel struct {
 }
 
 type TunnelRegistry struct {
-	tunnels  map[string]*Tunnel
+	tunnels map[string]*Tunnel
 	//affinity *cache.LRUCache
 	sync.RWMutex
 }
+type ControlRegistry struct {
+	controls map[string]*Control
+	sync.RWMutex
+}
+type loggedConn struct {
+	tcp *net.TCPConn
+	net.Conn
+	id  int32
+	typ string
+}
 
-func main(){
+type Listener struct {
+	net.Addr
+	Conns chan *loggedConn
+}
+
+var (
+	tunnelRegistry  *TunnelRegistry
+	controlRegistry *ControlRegistry
+
+	// XXX: kill these global variables - they're only used in tunnel.go for constructing forwarding URLs
+	opts      *Options
+	listeners map[string]*Listener
+)
+
+func main() {
 	log.Print("start!")
-	//opts := &Options{
-	//	tunnelAddr:":4443",
-	//	domain:"127.0.0.1",
-	//}
+	opts := &Options{
+		tunnelAddr: ":4443",
+		domain:     "127.0.0.1",
+	}
+	tunnelRegistry = &TunnelRegistry{
+		tunnels: make(map[string]*Tunnel),
+	}
+	controlRegistry = &ControlRegistry{
+		controls: make(map[string]*Control),
+	}
+	listeners = make(map[string]*Listener)
+	tunnelListener(opts.tunnelAddr)
+}
+
+func tunnelListener(addr string){
 
 }
