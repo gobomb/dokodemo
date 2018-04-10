@@ -7,7 +7,7 @@ import (
 
 type Conn interface {
 	net.Conn
-	//Id() string
+	Id() string
 	//SetType(string)
 	//CloseRead() error
 }
