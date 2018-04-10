@@ -10,6 +10,10 @@ import (
 	"doko/msg"
 )
 
+const (
+	connReadTimeout = 10 * time.Second
+)
+
 type Options struct {
 	tunnelAddr string
 	domain     string
@@ -135,13 +139,29 @@ func tunnelListener(addr string) {
 					log.Printf("tunnelListener failed with error %v: %s", r, debug.Stack())
 				}
 			}()
-			//var rawMsg Message
-			//if rawMsg, err = ReadMsg(tunnelConn); err != nil {
-			//	log.Printf("Failed to read message: %v", err)
+			tunnelConn.SetReadDeadline(time.Now().Add(connReadTimeout))
+			var rawMsg msg.Message
+			//rawMsg = msg.ReadMsg(tunnelConn)
+			//
+			//// don't timeout after the initial read, tunnel heartbeating will kill
+			//// dead connections
+			//tunnelConn.SetReadDeadline(time.Time{})
+			//
+			//switch m := rawMsg.(type) {
+			//case *msg.Auth:
+			//	NewControl(tunnelConn, m)
+			//
+			//case *msg.RegProxy:
+			//	NewProxy(tunnelConn, m)
+			//
+			//default:
 			//	tunnelConn.Close()
-			//	return
 			//}
-			msg.ReadMsg(tunnelConn)
+			rawMsg,err:=msg.ReadMsg(tunnelConn)
+			if err!=nil{
+				log.Printf("[msg.ReadMsg] %v",err)
+			}
+			log.Printf("[rawMsg] %v",rawMsg)
 
 		}(c)
 	}

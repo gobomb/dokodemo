@@ -3,6 +3,8 @@ package main
 import (
 	"github.com/qiniu/log"
 	"doko/conn"
+	"doko/msg"
+	"runtime"
 )
 
 type Options struct {
@@ -76,9 +78,22 @@ func (c *ClientModel) control() {
 	var ctlConn conn.Conn
 
 	ctlConn = conn.Dial(c.serverAddr)
-	n,err:=ctlConn.Write([]byte("scsdcjjjjjjjjjjjjjjjjjjjj"))
-	log.Println(n)
-	log.Println(err)
+
+	auth := &msg.Auth{
+		ClientId:  c.id,
+		OS:        runtime.GOOS,
+		Arch:      runtime.GOARCH,
+		//Version:   version.Proto,
+		//MmVersion: version.MajorMinor(),
+		//User:      c.authToken,
+	}
+
+	if err := msg.WriteMsg(ctlConn, auth); err != nil {
+		panic(err)
+	}
+
+	//log.Println(n)
+	//log.Println(err)
 
 	//defer ctlConn.Close()
 }
