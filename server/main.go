@@ -21,9 +21,9 @@ type ReqTunnel struct {
 
 type Conn interface {
 	net.Conn
-	Id() string
-	SetType(string)
-	CloseRead() error
+	//Id() string
+	//SetType(string)
+	//CloseRead() error
 }
 
 type Message interface{}
@@ -104,8 +104,8 @@ type ControlRegistry struct {
 type loggedConn struct {
 	tcp *net.TCPConn
 	net.Conn
-	id  int32
-	typ string
+	//id  int32
+	//typ string
 }
 
 type Listener struct {
@@ -138,6 +138,37 @@ func main() {
 	tunnelListener(opts.tunnelAddr)
 }
 
-func tunnelListener(addr string){
+func tunnelListener(addr string) {
+	listener, err := net.Listen("tcp", addr)
+	if err != nil {
+		log.Printf("[net.Listen tcp failed:]%v", err)
+		return
+	}
+	l := &Listener{
+		Addr:  listener.Addr(),
+		Conns: make(chan *loggedConn),
+	}
 
+	go func() {
+		for {
+			rawConn, err := listener.Accept()
+			if err != nil {
+				log.Printf("Failed to accept new TCP connection : %v", err)
+				continue
+			}
+			c := &loggedConn{
+				tcp:  rawConn.(*net.TCPConn),
+				Conn: rawConn,
+			}
+
+			log.Printf("New connection from %v", rawConn.RemoteAddr())
+			l.Conns <- c
+		}
+	}()
+	log.Printf("Listening for control and proxy connections on %s", l.Addr.String())
+	for c := range l.Conns {
+		go func(tunnelConn Conn) {
+
+		}(c)
+	}
 }
