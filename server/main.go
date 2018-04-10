@@ -5,6 +5,8 @@ import (
 	"sync"
 	"time"
 	"net"
+	"runtime/debug"
+	"doko/conn"
 )
 
 type Options struct {
@@ -19,13 +21,6 @@ type ReqTunnel struct {
 	RemotePort uint16
 }
 
-type Conn interface {
-	net.Conn
-	//Id() string
-	//SetType(string)
-	//CloseRead() error
-}
-
 type Message interface{}
 
 type Shutdown struct {
@@ -37,7 +32,7 @@ type Shutdown struct {
 
 type Control struct {
 	// actual connection
-	conn Conn
+	conn conn.Conn
 
 	// put a message in this channel to send it over
 	// conn to the client
@@ -54,7 +49,7 @@ type Control struct {
 	tunnels []*Tunnel
 
 	// proxy connections
-	proxies chan Conn
+	proxies chan conn.Conn
 
 	// identifier
 	id string
@@ -101,17 +96,6 @@ type ControlRegistry struct {
 	controls map[string]*Control
 	sync.RWMutex
 }
-type loggedConn struct {
-	tcp *net.TCPConn
-	net.Conn
-	//id  int32
-	//typ string
-}
-
-type Listener struct {
-	net.Addr
-	Conns chan *loggedConn
-}
 
 var (
 	tunnelRegistry  *TunnelRegistry
@@ -119,7 +103,7 @@ var (
 
 	// XXX: kill these global variables - they're only used in tunnel.go for constructing forwarding URLs
 	opts      *Options
-	listeners map[string]*Listener
+	listeners map[string]*conn.Listener
 )
 
 func main() {
@@ -134,41 +118,36 @@ func main() {
 	controlRegistry = &ControlRegistry{
 		controls: make(map[string]*Control),
 	}
-	listeners = make(map[string]*Listener)
+	listeners = make(map[string]*conn.Listener)
 	tunnelListener(opts.tunnelAddr)
 }
 
 func tunnelListener(addr string) {
-	listener, err := net.Listen("tcp", addr)
-	if err != nil {
-		log.Printf("[net.Listen tcp failed:]%v", err)
-		return
-	}
-	l := &Listener{
-		Addr:  listener.Addr(),
-		Conns: make(chan *loggedConn),
-	}
 
-	go func() {
-		for {
-			rawConn, err := listener.Accept()
-			if err != nil {
-				log.Printf("Failed to accept new TCP connection : %v", err)
-				continue
-			}
-			c := &loggedConn{
-				tcp:  rawConn.(*net.TCPConn),
-				Conn: rawConn,
-			}
+	listener := conn.Listen(addr)
 
-			log.Printf("New connection from %v", rawConn.RemoteAddr())
-			l.Conns <- c
-		}
-	}()
-	log.Printf("Listening for control and proxy connections on %s", l.Addr.String())
-	for c := range l.Conns {
-		go func(tunnelConn Conn) {
+	log.Printf("Listening for control and proxy connections on %s", listener.Addr.String())
+	for c := range listener.Conns {
+		go func(tunnelConn conn.Conn) {
+			defer func() {
+				if r := recover(); r != nil {
+					log.Printf("tunnelListener failed with error %v: %s", r, debug.Stack())
+				}
+			}()
+			//var rawMsg Message
+			//if rawMsg, err = ReadMsg(tunnelConn); err != nil {
+			//	log.Printf("Failed to read message: %v", err)
+			//	tunnelConn.Close()
+			//	return
+			//}
+			ReadMsg(tunnelConn)
 
 		}(c)
 	}
+}
+
+func ReadMsg(c conn.Conn) {
+	var b []byte
+	c.Read(b)
+	log.Printf("[read from tcp]: %v", b)
 }
