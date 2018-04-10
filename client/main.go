@@ -47,24 +47,24 @@ func run(config *Configuration) {
 func newClientModel(config *Configuration) *ClientModel {
 	return &ClientModel{
 		serverAddr: config.ServerAddr,
-		tunnels:    config.Tunnels,
+		tunnelConfig:    config.Tunnels,
 	}
 }
 
 type ClientModel struct {
 	id           string
-	tunnels      map[string]Tunnel
-	updateStatus UpdateStatus
-	connStatus   ConnStatus
-	ctl          Controller
+	//tunnels      map[string]Tunnel
+	//updateStatus UpdateStatus
+	//connStatus   ConnStatus
+	//ctl          Controller
 	serverAddr   string
 	tunnelConfig map[string]*TunnelConfiguration
 }
 
 func (c *ClientModel) run() {
-	for {
+	//for {
 		c.control()
-	}
+	//}
 }
 
 func (c *ClientModel) control() {
@@ -76,5 +76,9 @@ func (c *ClientModel) control() {
 	var ctlConn conn.Conn
 
 	ctlConn = conn.Dial(c.serverAddr)
-	defer ctlConn.Close()
+	n,err:=ctlConn.Write([]byte("scsdcjjjjjjjjjjjjjjjjjjjj"))
+	log.Println(n)
+	log.Println(err)
+
+	//defer ctlConn.Close()
 }
