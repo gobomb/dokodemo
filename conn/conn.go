@@ -10,7 +10,7 @@ type Conn interface {
 	net.Conn
 	Id() string
 	SetType(string)
-	//CloseRead() error
+	CloseRead() error
 }
 
 type loggedConn struct {
@@ -74,15 +74,22 @@ func Listen(addr string) (l *Listener) {
 	return
 }
 
-func Dial(addr string) (rawConn net.Conn) {
-	//var rawConn net.Conn
+func Dial(addr string) ( *loggedConn) {
+	var rawConn net.Conn
 	rawConn, err := net.Dial("tcp", addr)
 	if err != nil {
 		log.Printf("[net.Dial error]: %v", err)
-		return
+		return nil
 	}
+
+	conn:=&loggedConn{
+		tcp:rawConn.(*net.TCPConn),
+		Conn:rawConn,
+		typ:"auth",
+	}
+	//.tcp=rawConn.(*net.TCPConn)
 
 	log.Printf("New connection to: %v", rawConn.RemoteAddr())
 
-	return
+	return conn
 }

@@ -89,6 +89,7 @@ func (c *ClientModel) control() {
 	}
 
 	if err := msg.WriteMsg(ctlConn, auth); err != nil {
+		log.Printf("[msg.WriteMsg] %v",err)
 		panic(err)
 	}
 
