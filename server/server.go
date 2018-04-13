@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"github.com/qiniu/log"
@@ -43,7 +43,7 @@ var (
 	listeners map[string]*conn.Listener
 )
 
-func main() {
+func Main() {
 	log.Print("start!")
 	opts := &Options{
 		tunnelAddr: ":4443",
