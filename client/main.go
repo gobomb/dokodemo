@@ -150,6 +150,8 @@ var reqIdToTunnelConfig map[string]*TunnelConfiguration
 
 func (c *ClientModel) reqTunnel(ctlConn conn.Conn) {
 	reqIdToTunnelConfig = make(map[string]*TunnelConfiguration)
+
+	log.Printf("%v\n",c.tunnelConfig)
 	for _, config := range c.tunnelConfig {
 		var protocols []string
 		for proto, _ := range config.Protocols {
@@ -161,6 +163,7 @@ func (c *ClientModel) reqTunnel(ctlConn conn.Conn) {
 			Protocol:   strings.Join(protocols, "+"),
 			RemotePort: config.RemotePort,
 		}
+
 
 		if err := msg.WriteMsg(ctlConn, reqTunnel); err != nil {
 			panic(err)

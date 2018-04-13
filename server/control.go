@@ -81,7 +81,7 @@ func NewControl(ctlConn conn.Conn, authMsg *msg.Auth) {
 
 	// 登记客户端 id
 	c.id = authMsg.ClientId
-	if c.id == ""{
+	if c.id == "" {
 		c.id = "1111"
 	}
 
@@ -100,7 +100,7 @@ func NewControl(ctlConn conn.Conn, authMsg *msg.Auth) {
 
 	go c.manager()
 	go c.reader()
-	//go c.stopper()
+	go c.stopper()
 
 }
 
@@ -183,13 +183,50 @@ func (c *Control) reader() {
 			if err == io.EOF {
 				log.Println("EOF")
 				return
-			}else{
-				log.Printf("[msg.ReadMsg] %v",err)
+			} else {
+				log.Printf("[msg.ReadMsg] %v", err)
 				panic(err)
 			}
-		} else{
-			c.in<-msg
+		} else {
+			c.in <- msg
 		}
 	}
 
+}
+
+func (c *Control) RegisterProxy(conn conn.Conn) {
+	conn.SetDeadline(time.Now().Add(proxyStaleDuration))
+	select {
+	case c.proxies <- conn:
+		log.Printf("Registered")
+
+	default:
+		log.Printf("Proxies buffer is full, discarding.")
+		conn.Close()
+	}
+}
+
+func (c *Control) stopper() {
+	c.shutdown.WaitBegin()
+
+	controlRegistry.Del(c.id)
+
+	close(c.in)
+
+	c.managerShutdown.WaitComplete()
+
+	close(c.out)
+	c.conn.Close()
+	for _, t := range c.tunnels {
+		t.Shutdown()
+	}
+
+	close(c.proxies)
+
+	for p := range c.proxies {
+		p.Close()
+	}
+
+	c.shutdown.Complete()
+	log.Printf("Shutdown complete")
 }

@@ -3,6 +3,8 @@ package server
 import (
 	"time"
 	"net"
+	"log"
+	"sync/atomic"
 )
 
 type Tunnel struct {
@@ -25,3 +27,11 @@ type Tunnel struct {
 	closing int32
 }
 
+func (t *Tunnel)Shutdown(){
+	log.Printf("Shutting down")
+	atomic.StoreInt32(&t.closing,1)
+	if t.listener!=nil{
+		t.listener.Close()
+	}
+	tunnelRegistry.Del(t.url)
+}

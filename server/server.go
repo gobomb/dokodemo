@@ -88,8 +88,8 @@ func tunnelListener(addr string) {
 			case *msg.Auth:
 				NewControl(tunnelConn, m)
 
-				//case *msg.RegProxy:
-				//	NewProxy(tunnelConn, m)
+			case *msg.RegProxy:
+				NewProxy(tunnelConn, m)
 
 			default:
 				tunnelConn.Close()
@@ -102,4 +102,27 @@ func tunnelListener(addr string) {
 
 		}(c)
 	}
+}
+
+func NewProxy(pxyConn conn.Conn, regPxy *msg.RegProxy) {
+	// fail gracefully if the proxy connection fails to register
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Failed with error: %v", r)
+			pxyConn.Close()
+		}
+	}()
+
+	// set logging prefix
+	pxyConn.SetType("pxy")
+
+	// look up the control connection for this proxy
+	log.Printf("Registering new proxy for %s", regPxy.ClientId)
+	ctl := controlRegistry.Get(regPxy.ClientId)
+
+	if ctl == nil {
+		panic("No client found for identifier: " + regPxy.ClientId)
+	}
+
+	ctl.RegisterProxy(pxyConn)
 }
