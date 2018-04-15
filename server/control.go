@@ -8,6 +8,7 @@ import (
 	"doko/util"
 	"runtime/debug"
 	"io"
+	"strings"
 )
 
 const (
@@ -104,6 +105,21 @@ func NewControl(ctlConn conn.Conn, authMsg *msg.Auth) {
 
 }
 
+func (c *Control) registerTunnel(rawTunnelReq *msg.ReqTunnel){
+	//for _,
+	tunnelReq := *rawTunnelReq
+
+	log.Printf("Registering new tunnel")
+	t:=NewTunnel(&tunnelReq,c)
+	c.tunnels = append(c.tunnels,t)
+	c.out<-&msg.NewTunnel{
+		Url:,
+		Protocol:,
+		ReqId:,
+	}
+	rawTunnelReq.Hostname = strings.Replace(t.url,proto+"://",",1")
+}
+
 func (c *Control) manager() {
 	defer func() {
 		if err := recover(); err != nil {
@@ -132,7 +148,7 @@ func (c *Control) manager() {
 			switch m := mRaw.(type) {
 			case *msg.ReqTunnel:
 				log.Println(m)
-				//c.registerTunnel(m)
+				c.registerTunnel(m)
 			case *msg.Ping:
 				c.lastPing = time.Now()
 				c.out <- &msg.Pong{}
