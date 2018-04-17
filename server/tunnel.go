@@ -3,7 +3,7 @@ package server
 import (
 	"time"
 	"net"
-	"log"
+	"github.com/qiniu/log"
 	"sync/atomic"
 	"doko/msg"
 	"fmt"
