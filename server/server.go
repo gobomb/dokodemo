@@ -45,7 +45,7 @@ var (
 
 func Main() {
 	log.Print("start!")
-	opts := &Options{
+	opts = &Options{
 		tunnelAddr: ":4443",
 		domain:     "127.0.0.1",
 	}

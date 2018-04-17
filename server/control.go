@@ -110,22 +110,23 @@ func (c *Control) registerTunnel(rawTunnelReq *msg.ReqTunnel){
 	tunnelReq := *rawTunnelReq
 
 	log.Printf("Registering new tunnel")
+	log.Println(tunnelReq)
 	t:=NewTunnel(&tunnelReq,c)
 	c.tunnels = append(c.tunnels,t)
 	c.out<-&msg.NewTunnel{
-		Url:,
-		Protocol:,
-		ReqId:,
+		Url:t.url,
+		Protocol:"tcp",
+		ReqId:rawTunnelReq.ReqId,
 	}
-	rawTunnelReq.Hostname = strings.Replace(t.url,proto+"://",",1")
+	rawTunnelReq.Hostname = strings.Replace(t.url,"tcp"+"://","",1)
 }
 
 func (c *Control) manager() {
-	defer func() {
-		if err := recover(); err != nil {
-			log.Printf("Control::manager failed with error %v: %s", err, debug.Stack())
-		}
-	}()
+	//defer func() {
+	//	if err := recover(); err != nil {
+	//		log.Printf("Control::manager failed with error %v: %s", err, debug.Stack())
+	//	}
+	//}()
 	defer c.shutdown.Begin()
 
 	defer c.managerShutdown.Complete()

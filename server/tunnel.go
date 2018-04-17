@@ -39,6 +39,36 @@ func (t *Tunnel) Shutdown() {
 	tunnelRegistry.Del(t.url)
 }
 
+func (c *Control) GetProxy() (conn.Conn, error) {
+	var (
+		proxyConn conn.Conn
+		err       error
+	)
+	var ok bool
+	//var err error
+	select {
+	case proxyConn, ok = <-c.proxies:
+		if !ok {
+			err = fmt.Errorf("no proxy connections available, control is closing")
+			return nil,err
+		}
+	default:
+		log.Printf("No proxy in pool, requesting proxy from control . . .")
+		select {
+		case proxyConn, ok = <-c.proxies:
+			if !ok {
+				err = fmt.Errorf("no proxy connections available, control is closing")
+				return nil,err
+			}
+		case <-time.After(pingTimeoutInterval):
+			err = fmt.Errorf("timeout tring to get proxy connection")
+			return nil,err
+		}
+	}
+	return proxyConn,nil
+
+}
+
 func NewTunnel(m *msg.ReqTunnel, ctl *Control) (t *Tunnel) {
 	var err error
 	t = &Tunnel{
@@ -77,7 +107,7 @@ func NewTunnel(m *msg.ReqTunnel, ctl *Control) (t *Tunnel) {
 		bindTcp(0)
 		return
 	default:
-		err = fmt.Errorf("Protocol %s is not supported", proto)
+		err = fmt.Errorf("protocol %s is not supported", proto)
 		return
 	}
 	log.Printf("Registerd new tunnel on: %s", t.ctl.conn.Id())
@@ -86,6 +116,7 @@ func NewTunnel(m *msg.ReqTunnel, ctl *Control) (t *Tunnel) {
 
 func (t *Tunnel) listenTcp(listener *net.TCPListener) {
 	for {
+		//var tcpConn conn.Conn
 		tcpConn, err := listener.AcceptTCP()
 		if err != nil {
 			if atomic.LoadInt32(&t.closing) == 1 {
@@ -95,8 +126,9 @@ func (t *Tunnel) listenTcp(listener *net.TCPListener) {
 			log.Printf("Failed to accept new TCP conn: %v", err)
 			continue
 		}
+		wrappedConn := conn.Wrap(tcpConn, "pub")
 		log.Printf("New connection from %v", tcpConn.RemoteAddr())
-		go t.HandlePublicConnection(tcpConn)
+		go t.HandlePublicConnection(wrappedConn)
 	}
 
 }
@@ -130,5 +162,7 @@ func (t *Tunnel) HandlePublicConnection(publicConn conn.Conn) {
 		return
 	}
 	proxyConn.SetDeadline(time.Time{})
-	_,_ =conn.Join(publicConn,proxyConn)
+	_, _ = conn.Join(publicConn, proxyConn)
+
+	log.Printf("join ok %v\n", startTime)
 }

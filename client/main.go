@@ -68,12 +68,13 @@ func newClientModel(config *Configuration) *ClientModel {
 	return &ClientModel{
 		serverAddr:   config.ServerAddr,
 		tunnelConfig: config.Tunnels,
+		tunnels: make(map[string]Tunnel),
 	}
 }
 
 type ClientModel struct {
-	id string
-	tunnels      map[string]Tunnel
+	id      string
+	tunnels map[string]Tunnel
 	//updateStatus UpdateStatus
 	//connStatus   ConnStatus
 	//ctl          Controller
@@ -88,15 +89,15 @@ func (c *ClientModel) run() {
 }
 
 func (c *ClientModel) control() {
-	defer func() {
-		if r := recover(); r != nil {
-			log.Printf("control recovering from failure %v", r)
-		}
-	}()
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		log.Printf("control recovering from failure %v", r)
+	//	}
+	//}()
 	var ctlConn conn.Conn
 	//var err error
 
-	ctlConn = conn.Dial(c.serverAddr)
+	ctlConn = conn.Dial(c.serverAddr,"ctl")
 
 	c.auth(ctlConn)
 
@@ -105,7 +106,42 @@ func (c *ClientModel) control() {
 	c.mainControlLoop(ctlConn)
 
 }
+func (c *ClientModel) proxy() {
+	var (
+		remoteConn conn.Conn
+		err        error
+	)
 
+	remoteConn = conn.Dial(c.serverAddr,"pxy")
+	if err != nil {
+		log.Errorf("Failed to establish proxy connection: %v", err)
+		return
+	}
+	defer remoteConn.Close()
+	log.Println(c.id)
+	err = msg.WriteMsg(remoteConn, &msg.RegProxy{ClientId: c.id})
+	if err != nil {
+		log.Errorf("Failed to write RegProxy: %v", err)
+		return
+	}
+
+	var startPxy msg.StartProxy
+	if err = msg.ReadMsgInto(remoteConn, &startPxy); err != nil {
+		log.Errorf("Server failed to write StartProxy: %v", err)
+		return
+	}
+	tunnel, ok := c.tunnels[startPxy.Url]
+	if !ok {
+		log.Errorf("Couldn't find tunnel for proxy: %s", startPxy.Url)
+		return
+	}
+
+	//start := time.Now()
+	localConn := conn.Dial(tunnel.LocalAddr, "prv")
+	defer localConn.Close()
+	//locConn = wrapcon
+	conn.Join(localConn,remoteConn)
+}
 
 func (c *ClientModel) mainControlLoop(ctlConn conn.Conn) {
 	var err error
@@ -117,7 +153,7 @@ func (c *ClientModel) mainControlLoop(ctlConn conn.Conn) {
 
 		switch m := rawMsg.(type) {
 		case *msg.ReqProxy:
-			//go c.proxy()
+			go c.proxy()
 		case *msg.Pong:
 			atomic.StoreInt64(&lastPong, time.Now().UnixNano())
 		case *msg.NewTunnel:
@@ -129,10 +165,10 @@ func (c *ClientModel) mainControlLoop(ctlConn conn.Conn) {
 			}
 
 			tunnel := Tunnel{
-				PublicUrl:m.Url,
-				LocalAddr:reqIdToTunnelConfig[m.ReqId].Protocols[m.Protocol],
+				PublicUrl: m.Url,
+				LocalAddr: reqIdToTunnelConfig[m.ReqId].Protocols[m.Protocol],
 			}
-			c.tunnels[tunnel.PublicUrl]=tunnel
+			c.tunnels[tunnel.PublicUrl] = tunnel
 			log.Printf("Tunnel established at %v", tunnel.PublicUrl)
 		default:
 			log.Warnf("Ignoring unknown control message %v ", m)
@@ -151,7 +187,7 @@ var reqIdToTunnelConfig map[string]*TunnelConfiguration
 func (c *ClientModel) reqTunnel(ctlConn conn.Conn) {
 	reqIdToTunnelConfig = make(map[string]*TunnelConfiguration)
 
-	log.Printf("%v\n",c.tunnelConfig)
+	log.Printf("%v\n", c.tunnelConfig)
 	for _, config := range c.tunnelConfig {
 		var protocols []string
 		for proto, _ := range config.Protocols {
@@ -163,7 +199,6 @@ func (c *ClientModel) reqTunnel(ctlConn conn.Conn) {
 			Protocol:   strings.Join(protocols, "+"),
 			RemotePort: config.RemotePort,
 		}
-
 
 		if err := msg.WriteMsg(ctlConn, reqTunnel); err != nil {
 			panic(err)
@@ -217,6 +252,7 @@ func (c *ClientModel) heartbeat(lastPongAddr *int64, conn conn.Conn) {
 
 func (c *ClientModel) auth(ctlConn conn.Conn) {
 	var err error
+	c.id ="1"
 	auth := &msg.Auth{
 		ClientId: c.id,
 		OS:       runtime.GOOS,

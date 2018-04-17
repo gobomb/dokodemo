@@ -4,6 +4,9 @@ import (
 	"net"
 	"github.com/qiniu/log"
 	"fmt"
+	"sync"
+	"io"
+	"math/rand"
 )
 
 type Conn interface {
@@ -74,7 +77,7 @@ func Listen(addr string) (l *Listener) {
 	return
 }
 
-func Dial(addr string) ( *loggedConn) {
+func Dial(addr,typ string) (*loggedConn) {
 	var rawConn net.Conn
 	rawConn, err := net.Dial("tcp", addr)
 	if err != nil {
@@ -82,14 +85,54 @@ func Dial(addr string) ( *loggedConn) {
 		return nil
 	}
 
-	conn:=&loggedConn{
-		tcp:rawConn.(*net.TCPConn),
-		Conn:rawConn,
-		typ:"auth",
+	conn := &loggedConn{
+		tcp:  rawConn.(*net.TCPConn),
+		Conn: rawConn,
+		typ:  typ,
 	}
 	//.tcp=rawConn.(*net.TCPConn)
 
 	log.Printf("New connection to: %v", rawConn.RemoteAddr())
 
 	return conn
+}
+
+func Join(c Conn, c2 Conn) (int64, int64) {
+	var wait sync.WaitGroup
+	pipe := func(to Conn, from Conn, bytesCopied *int64) {
+		defer to.Close()
+		defer from.Close()
+		defer wait.Done()
+
+		var err error
+		*bytesCopied, err = io.Copy(to, from)
+		if err != nil {
+			log.Printf("Copied %d bytes to %s before failing with error %v", *bytesCopied, to.Id(), err)
+		} else {
+			log.Printf("Copied %d bytes to %s", *bytesCopied, to.Id())
+		}
+	}
+
+	wait.Add(2)
+	var fromBytes, toBytes int64
+	go pipe(c, c2, &fromBytes)
+	go pipe(c2, c, &toBytes)
+	log.Printf("Joined with connection %s\n", c2.Id())
+	wait.Wait()
+	return fromBytes, toBytes
+}
+
+func Wrap(conn net.Conn, typ string) *loggedConn{
+	return wrapConn(conn, typ)
+}
+
+func wrapConn(conn net.Conn,typ string)*loggedConn{
+	switch c:= conn.(type){
+	case *loggedConn:
+		return c
+	case *net.TCPConn:
+		wrapped := &loggedConn{c,conn,rand.Int31(),typ}
+		return wrapped
+	}
+	return nil
 }
