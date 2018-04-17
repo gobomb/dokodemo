@@ -50,7 +50,7 @@ func (c *Control) GetProxy() (conn.Conn, error) {
 	case proxyConn, ok = <-c.proxies:
 		if !ok {
 			err = fmt.Errorf("no proxy connections available, control is closing")
-			return nil,err
+			return nil, err
 		}
 	default:
 		log.Printf("No proxy in pool, requesting proxy from control . . .")
@@ -58,14 +58,14 @@ func (c *Control) GetProxy() (conn.Conn, error) {
 		case proxyConn, ok = <-c.proxies:
 			if !ok {
 				err = fmt.Errorf("no proxy connections available, control is closing")
-				return nil,err
+				return nil, err
 			}
 		case <-time.After(pingTimeoutInterval):
 			err = fmt.Errorf("timeout tring to get proxy connection")
-			return nil,err
+			return nil, err
 		}
 	}
-	return proxyConn,nil
+	return proxyConn, nil
 
 }
 
@@ -137,13 +137,15 @@ func (t *Tunnel) HandlePublicConnection(publicConn conn.Conn) {
 	startTime := time.Now()
 	var proxyConn conn.Conn
 	var err error
+
+
 	for i := 0; i < (2 * proxyMaxPoolSize); i++ {
 
 		if proxyConn, err = t.ctl.GetProxy(); err != nil {
 			log.Printf("Failded to get proxy connection: %v \n", err)
 			return
 		}
-		defer proxyConn.Close()
+		//defer proxyConn.Close()
 		log.Printf("Got proxy connectin %v \n", proxyConn.Id())
 
 		startPxyMsg := &msg.StartProxy{
@@ -165,4 +167,5 @@ func (t *Tunnel) HandlePublicConnection(publicConn conn.Conn) {
 	_, _ = conn.Join(publicConn, proxyConn)
 
 	log.Printf("join ok %v\n", startTime)
+	proxyConn.Close()
 }
