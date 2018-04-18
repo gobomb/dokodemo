@@ -29,13 +29,13 @@ type Listener struct {
 }
 
 func (c *loggedConn) Id() string {
-	return fmt.Sprintf("%s:%x", c.typ, c.id)
+	return fmt.SDebugf("%s:%x", c.typ, c.id)
 }
 
 func (c *loggedConn) SetType(typ string) {
 	oldId := c.Id()
 	c.typ = typ
-	log.Printf("Renamed connection %s", oldId)
+	log.Debugf("Renamed connection %s", oldId)
 }
 
 func (c *loggedConn) CloseRead() error {
@@ -50,7 +50,7 @@ func Listen(addr string) (l *Listener) {
 
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
-		log.Printf("[net.Listen tcp failed:]%v", err)
+		log.Debugf("[net.Listen tcp failed:]%v", err)
 		return
 	}
 	l = &Listener{
@@ -62,7 +62,7 @@ func Listen(addr string) (l *Listener) {
 		for {
 			rawConn, err := listener.Accept()
 			if err != nil {
-				log.Printf("Failed to accept new TCP connection : %v", err)
+				log.Debugf("Failed to accept new TCP connection : %v", err)
 				continue
 			}
 			c := &loggedConn{
@@ -70,7 +70,7 @@ func Listen(addr string) (l *Listener) {
 				Conn: rawConn,
 			}
 
-			log.Printf("New connection from %v", rawConn.RemoteAddr())
+			log.Debugf("New connection from %v", rawConn.RemoteAddr())
 			l.Conns <- c
 		}
 	}()
@@ -81,7 +81,7 @@ func Dial(addr,typ string) (*loggedConn) {
 	var rawConn net.Conn
 	rawConn, err := net.Dial("tcp", addr)
 	if err != nil {
-		log.Printf("[net.Dial error]: %v", err)
+		log.Debugf("[net.Dial error]: %v", err)
 		return nil
 	}
 
@@ -92,7 +92,7 @@ func Dial(addr,typ string) (*loggedConn) {
 	}
 	//.tcp=rawConn.(*net.TCPConn)
 
-	log.Printf("New connection to: %v", rawConn.RemoteAddr())
+	log.Debugf("New connection to: %v", rawConn.RemoteAddr())
 
 	return conn
 }
@@ -107,9 +107,9 @@ func Join(c Conn, c2 Conn) (int64, int64) {
 		var err error
 		*bytesCopied, err = io.Copy(to, from)
 		if err != nil {
-			log.Printf("Copied %d bytes to %s before failing with error %v", *bytesCopied, to.Id(), err)
+			log.Debugf("Copied %d bytes to %s before failing with error %v", *bytesCopied, to.Id(), err)
 		} else {
-			log.Printf("Copied %d bytes to %s", *bytesCopied, to.Id())
+			log.Debugf("Copied %d bytes to %s", *bytesCopied, to.Id())
 		}
 	}
 
@@ -117,7 +117,7 @@ func Join(c Conn, c2 Conn) (int64, int64) {
 	var fromBytes, toBytes int64
 	go pipe(c, c2, &fromBytes)
 	go pipe(c2, c, &toBytes)
-	log.Printf("Joined with connection %s\n", c2.Id())
+	log.Debugf("oined with connection %s\n", c2.Id())
 	wait.Wait()
 	return fromBytes, toBytes
 }

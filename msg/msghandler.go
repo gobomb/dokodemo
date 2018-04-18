@@ -10,18 +10,18 @@ import (
 
 
 func readMsgShared(c conn.Conn) (buffer []byte, err error) {
-	log.Println("Waiting to read message")
+	log.Debug("Waiting to read message")
 
 	var sz int64
 	err = binary.Read(c, binary.LittleEndian, &sz)
 	if err != nil {
 		return
 	}
-	log.Printf("Reading message with length: %d", sz)
+	log.Debugf("Reading message with length: %d", sz)
 
 	buffer = make([]byte, sz)
 	n, err := c.Read(buffer)
-	log.Printf("Read message %s", buffer)
+	log.Debugf("Read message %s", buffer)
 
 	if err != nil {
 		return
@@ -58,7 +58,7 @@ func WriteMsg(c conn.Conn, msg interface{}) (err error) {
 		return
 	}
 
-	log.Printf("Writing message: %s", string(buffer))
+	log.Debugf("Writing message: %s", string(buffer))
 	err = binary.Write(c, binary.LittleEndian, int64(len(buffer)))
 
 	if err != nil {
