@@ -42,9 +42,10 @@ type TunnelConfiguration struct {
 
 func main() {
 	protocols := make(map[string]string)
-	protocols["tcp"] = "192.168.2.20:80"
+	//protocols["tcp"] = "192.168.2.20:80"
+	protocols["tcp"] = "0.0.0.0:22"
 	tunnels := make(map[string]*TunnelConfiguration)
-	tunnels["szu"] = &TunnelConfiguration{
+	tunnels["ssh"] = &TunnelConfiguration{
 		Protocols:  protocols,
 		RemotePort: 9999,
 	}
@@ -52,7 +53,6 @@ func main() {
 		ServerAddr: "0.0.0.0:4443",
 		Tunnels:    tunnels,
 	}
-	log.Printf("%v", config)
 
 	run(config)
 
@@ -68,7 +68,7 @@ func newClientModel(config *Configuration) *ClientModel {
 	return &ClientModel{
 		serverAddr:   config.ServerAddr,
 		tunnelConfig: config.Tunnels,
-		tunnels: make(map[string]Tunnel),
+		tunnels:      make(map[string]Tunnel),
 	}
 }
 
@@ -97,7 +97,7 @@ func (c *ClientModel) control() {
 	var ctlConn conn.Conn
 	//var err error
 
-	ctlConn = conn.Dial(c.serverAddr,"ctl")
+	ctlConn = conn.Dial(c.serverAddr, "ctl")
 
 	c.auth(ctlConn)
 
@@ -112,13 +112,12 @@ func (c *ClientModel) proxy() {
 		err        error
 	)
 
-	remoteConn = conn.Dial(c.serverAddr,"pxy")
+	remoteConn = conn.Dial(c.serverAddr, "pxy")
 	if err != nil {
 		log.Errorf("Failed to establish proxy connection: %v", err)
 		return
 	}
 	defer remoteConn.Close()
-	log.Println(c.id)
 	err = msg.WriteMsg(remoteConn, &msg.RegProxy{ClientId: c.id})
 	if err != nil {
 		log.Errorf("Failed to write RegProxy: %v", err)
@@ -140,7 +139,7 @@ func (c *ClientModel) proxy() {
 	localConn := conn.Dial(tunnel.LocalAddr, "prv")
 	defer localConn.Close()
 	//locConn = wrapcon
-	conn.Join(localConn,remoteConn)
+	conn.Join(localConn, remoteConn)
 }
 
 func (c *ClientModel) mainControlLoop(ctlConn conn.Conn) {
@@ -169,6 +168,7 @@ func (c *ClientModel) mainControlLoop(ctlConn conn.Conn) {
 				LocalAddr: reqIdToTunnelConfig[m.ReqId].Protocols[m.Protocol],
 			}
 			c.tunnels[tunnel.PublicUrl] = tunnel
+			log.Info(tunnel)
 			log.Printf("Tunnel established at %v", tunnel.PublicUrl)
 		default:
 			log.Warnf("Ignoring unknown control message %v ", m)
@@ -187,8 +187,8 @@ var reqIdToTunnelConfig map[string]*TunnelConfiguration
 func (c *ClientModel) reqTunnel(ctlConn conn.Conn) {
 	reqIdToTunnelConfig = make(map[string]*TunnelConfiguration)
 
-	log.Printf("%v\n", c.tunnelConfig)
 	for _, config := range c.tunnelConfig {
+		log.Info(config)
 		var protocols []string
 		for proto, _ := range config.Protocols {
 			protocols = append(protocols, proto)
@@ -252,11 +252,9 @@ func (c *ClientModel) heartbeat(lastPongAddr *int64, conn conn.Conn) {
 
 func (c *ClientModel) auth(ctlConn conn.Conn) {
 	var err error
-	c.id ="1"
 	auth := &msg.Auth{
-		ClientId: c.id,
-		OS:       runtime.GOOS,
-		Arch:     runtime.GOARCH,
+		OS:   runtime.GOOS,
+		Arch: runtime.GOARCH,
 		//Version:   version.Proto,
 		//MmVersion: version.MajorMinor(),
 		//User:      c.authToken,
@@ -272,7 +270,7 @@ func (c *ClientModel) auth(ctlConn conn.Conn) {
 		log.Printf("[msg.ReadMsgInto] %v", err)
 		panic(err)
 	}
-
+	c.id = authResp.ClientId
 	if authResp.Error != "" {
 		emsg := fmt.Sprintf("Faild to authenticate to server: %s", authResp.Error)
 		log.Printf("[] %v", emsg)

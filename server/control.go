@@ -81,9 +81,11 @@ func NewControl(ctlConn conn.Conn, authMsg *msg.Auth) {
 	//}
 
 	// 登记客户端 id
+
+	randStr := util.GenerateRandomString()
 	c.id = authMsg.ClientId
 	if c.id == "" {
-		c.id = "1111"
+		c.id = randStr
 	}
 
 	// 注册控制器
@@ -105,20 +107,24 @@ func NewControl(ctlConn conn.Conn, authMsg *msg.Auth) {
 
 }
 
-func (c *Control) registerTunnel(rawTunnelReq *msg.ReqTunnel){
+func (c *Control) registerTunnel(rawTunnelReq *msg.ReqTunnel) {
 	//for _,
 	tunnelReq := *rawTunnelReq
 
 	log.Printf("Registering new tunnel")
-	log.Println(tunnelReq)
-	t:=NewTunnel(&tunnelReq,c)
-	c.tunnels = append(c.tunnels,t)
-	c.out<-&msg.NewTunnel{
-		Url:t.url,
-		Protocol:"tcp",
-		ReqId:rawTunnelReq.ReqId,
+	t := NewTunnel(&tunnelReq, c)
+	c.tunnels = append(c.tunnels, t)
+	log.Info(&msg.NewTunnel{
+		Url:      t.url,
+		Protocol: "tcp",
+		ReqId:    rawTunnelReq.ReqId,
+	})
+	c.out <- &msg.NewTunnel{
+		Url:      t.url,
+		Protocol: "tcp",
+		ReqId:    rawTunnelReq.ReqId,
 	}
-	rawTunnelReq.Hostname = strings.Replace(t.url,"tcp"+"://","",1)
+	rawTunnelReq.Hostname = strings.Replace(t.url, "tcp"+"://", "", 1)
 }
 
 func (c *Control) manager() {
@@ -148,7 +154,7 @@ func (c *Control) manager() {
 			}
 			switch m := mRaw.(type) {
 			case *msg.ReqTunnel:
-				log.Println(m)
+				log.Debugf("msg.ReqTunnel:%v",m)
 				c.registerTunnel(m)
 			case *msg.Ping:
 				c.lastPing = time.Now()

@@ -29,7 +29,7 @@ type Listener struct {
 }
 
 func (c *loggedConn) Id() string {
-	return fmt.SDebugf("%s:%x", c.typ, c.id)
+	return fmt.Sprintf("%s:%x", c.typ, c.id)
 }
 
 func (c *loggedConn) SetType(typ string) {
