@@ -13,7 +13,6 @@ var (
 func startServerGin() {
 	// 获取服务端 gin 实例
 	sGin := gin.Default()
-
 	// HTML 文件路由
 	sGin.LoadHTMLGlob("./front/view/*")
 	// 服务器路由
