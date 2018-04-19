@@ -1,13 +1,13 @@
 package server
 
 import (
-	"time"
-	"net"
-	"github.com/qiniu/log"
-	"sync/atomic"
+	"doko/conn"
 	"doko/msg"
 	"fmt"
-	"doko/conn"
+	"github.com/qiniu/log"
+	"net"
+	"sync/atomic"
+	"time"
 )
 
 type Tunnel struct {
@@ -37,36 +37,6 @@ func (t *Tunnel) Shutdown() {
 		t.listener.Close()
 	}
 	tunnelRegistry.Del(t.url)
-}
-
-func (c *Control) GetProxy() (conn.Conn, error) {
-	var (
-		proxyConn conn.Conn
-		err       error
-	)
-	var ok bool
-	//var err error
-	select {
-	case proxyConn, ok = <-c.proxies:
-		if !ok {
-			err = fmt.Errorf("no proxy connections available, control is closing")
-			return nil, err
-		}
-	default:
-		log.Printf("No proxy in pool, requesting proxy from control . . .")
-		select {
-		case proxyConn, ok = <-c.proxies:
-			if !ok {
-				err = fmt.Errorf("no proxy connections available, control is closing")
-				return nil, err
-			}
-		case <-time.After(pingTimeoutInterval):
-			err = fmt.Errorf("timeout tring to get proxy connection")
-			return nil, err
-		}
-	}
-	return proxyConn, nil
-
 }
 
 func NewTunnel(m *msg.ReqTunnel, ctl *Control) (t *Tunnel) {
@@ -137,7 +107,6 @@ func (t *Tunnel) HandlePublicConnection(publicConn conn.Conn) {
 	startTime := time.Now()
 	var proxyConn conn.Conn
 	var err error
-
 
 	for i := 0; i < (2 * proxyMaxPoolSize); i++ {
 

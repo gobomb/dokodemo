@@ -1,11 +1,11 @@
 package server
 
 import (
-	"github.com/qiniu/log"
-	"time"
-	"runtime/debug"
 	"doko/conn"
 	"doko/msg"
+	"github.com/qiniu/log"
+	"runtime/debug"
+	"time"
 )
 
 const (
@@ -42,6 +42,12 @@ var (
 	opts      *Options
 	listeners map[string]*conn.Listener
 )
+
+func LogInfo() {
+	log.Info(tunnelRegistry.tunnels)
+	log.Info(controlRegistry.controls)
+	log.Info(listeners)
+}
 
 func Main() {
 	log.Print("start!")
@@ -80,8 +86,7 @@ func tunnelListener(addr string) {
 				return
 			}
 
-			// don't timeout after the initial read, tunnel heartbeating will kill
-			// dead connections
+			// don't timeout after the initial read, tunnel heartbeating will kill dead connections
 			tunnelConn.SetReadDeadline(time.Time{})
 
 			switch m := rawMsg.(type) {
@@ -94,11 +99,6 @@ func tunnelListener(addr string) {
 			default:
 				tunnelConn.Close()
 			}
-			//rawMsg,err:=msg.ReadMsg(tunnelConn)
-			//if err!=nil{
-			//	log.Printf("[msg.ReadMsg] %v",err)
-			//}
-			//log.Printf("[rawMsg] %v",rawMsg)
 
 		}(c)
 	}

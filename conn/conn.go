@@ -1,12 +1,12 @@
 package conn
 
 import (
-	"net"
-	"github.com/qiniu/log"
 	"fmt"
-	"sync"
+	"github.com/qiniu/log"
 	"io"
 	"math/rand"
+	"net"
+	"sync"
 )
 
 type Conn interface {
@@ -77,7 +77,7 @@ func Listen(addr string) (l *Listener) {
 	return
 }
 
-func Dial(addr,typ string) (*loggedConn) {
+func Dial(addr, typ string) *loggedConn {
 	var rawConn net.Conn
 	rawConn, err := net.Dial("tcp", addr)
 	if err != nil {
@@ -122,16 +122,17 @@ func Join(c Conn, c2 Conn) (int64, int64) {
 	return fromBytes, toBytes
 }
 
-func Wrap(conn net.Conn, typ string) *loggedConn{
+func Wrap(conn net.Conn, typ string) *loggedConn {
 	return wrapConn(conn, typ)
 }
 
-func wrapConn(conn net.Conn,typ string)*loggedConn{
-	switch c:= conn.(type){
+func wrapConn(conn net.Conn, typ string) *loggedConn {
+	switch c := conn.(type) {
 	case *loggedConn:
 		return c
 	case *net.TCPConn:
-		wrapped := &loggedConn{c,conn,rand.Int31(),typ}
+		wrapped := &loggedConn{c, conn, rand.Int31(), typ}
+		log.Info(rand.Int31())
 		return wrapped
 	}
 	return nil

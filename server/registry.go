@@ -1,9 +1,9 @@
 package server
 
 import (
-	"sync"
 	"fmt"
 	"log"
+	"sync"
 )
 
 type TunnelRegistry struct {
@@ -23,12 +23,11 @@ func (r *TunnelRegistry) Register(url string, t *Tunnel) error {
 	return nil
 }
 
-func (r *TunnelRegistry)Del(url string){
+func (r *TunnelRegistry) Del(url string) {
 	r.Lock()
 	defer r.Unlock()
-	delete(r.tunnels,url)
+	delete(r.tunnels, url)
 }
-
 
 type ControlRegistry struct {
 	controls map[string]*Control

@@ -2,12 +2,11 @@ package msg
 
 import (
 	"doko/conn"
-	"github.com/qiniu/log"
 	"encoding/binary"
-	"fmt"
 	"errors"
+	"fmt"
+	"github.com/qiniu/log"
 )
-
 
 func readMsgShared(c conn.Conn) (buffer []byte, err error) {
 	log.Debug("Waiting to read message")

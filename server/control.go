@@ -1,14 +1,15 @@
 package server
 
 import (
-	"github.com/qiniu/log"
-	"time"
 	"doko/conn"
 	"doko/msg"
 	"doko/util"
-	"runtime/debug"
+	"fmt"
+	"github.com/qiniu/log"
 	"io"
+	"runtime/debug"
 	"strings"
+	"time"
 )
 
 const (
@@ -114,16 +115,12 @@ func (c *Control) registerTunnel(rawTunnelReq *msg.ReqTunnel) {
 	log.Printf("Registering new tunnel")
 	t := NewTunnel(&tunnelReq, c)
 	c.tunnels = append(c.tunnels, t)
-	log.Info(&msg.NewTunnel{
-		Url:      t.url,
-		Protocol: "tcp",
-		ReqId:    rawTunnelReq.ReqId,
-	})
 	c.out <- &msg.NewTunnel{
 		Url:      t.url,
 		Protocol: "tcp",
 		ReqId:    rawTunnelReq.ReqId,
 	}
+	log.Info(rawTunnelReq.ReqId)
 	rawTunnelReq.Hostname = strings.Replace(t.url, "tcp"+"://", "", 1)
 }
 
@@ -154,7 +151,7 @@ func (c *Control) manager() {
 			}
 			switch m := mRaw.(type) {
 			case *msg.ReqTunnel:
-				log.Debugf("msg.ReqTunnel:%v",m)
+				log.Debugf("msg.ReqTunnel:%v", m)
 				c.registerTunnel(m)
 			case *msg.Ping:
 				c.lastPing = time.Now()
@@ -214,6 +211,37 @@ func (c *Control) reader() {
 			c.in <- msg
 		}
 	}
+
+}
+
+func (c *Control) GetProxy() (conn.Conn, error) {
+	var (
+		proxyConn conn.Conn
+		err       error
+	)
+	var ok bool
+	//var err error
+	select {
+	case proxyConn, ok = <-c.proxies:
+		if !ok {
+			err = fmt.Errorf("no proxy connections available, control is closing")
+			return nil, err
+		}
+	default:
+		log.Printf("No proxy in pool, requesting proxy from control . . .")
+		c.out <- &msg.ReqProxy{}
+		select {
+		case proxyConn, ok = <-c.proxies:
+			if !ok {
+				err = fmt.Errorf("no proxy connections available, control is closing")
+				return nil, err
+			}
+		case <-time.After(pingTimeoutInterval):
+			err = fmt.Errorf("timeout tring to get proxy connection")
+			return nil, err
+		}
+	}
+	return proxyConn, nil
 
 }
 

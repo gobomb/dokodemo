@@ -1,8 +1,8 @@
 package util
 
 import (
-	"github.com/satori/go.uuid"
 	"github.com/qiniu/log"
+	"github.com/satori/go.uuid"
 )
 
 func GenerateRandomString() string {

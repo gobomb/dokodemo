@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/qiniu/log"
 	"doko/conn"
 	"doko/msg"
-	"runtime"
+	"doko/util"
 	"fmt"
+	"github.com/qiniu/log"
+	"runtime"
 	"strings"
-	"time"
 	"sync/atomic"
+	"time"
 )
 
 const (
@@ -193,9 +194,9 @@ func (c *ClientModel) reqTunnel(ctlConn conn.Conn) {
 		for proto, _ := range config.Protocols {
 			protocols = append(protocols, proto)
 		}
-
+		reqId := util.GenerateRandomString()
 		reqTunnel := &msg.ReqTunnel{
-			ReqId:      "2222",
+			ReqId:      reqId,
 			Protocol:   strings.Join(protocols, "+"),
 			RemotePort: config.RemotePort,
 		}

@@ -1,6 +1,5 @@
 package util
 
-
-func StartUp(){
+func StartUp() {
 
 }
