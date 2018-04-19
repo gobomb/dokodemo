@@ -24,16 +24,12 @@ type ReqTunnel struct {
 	RemotePort uint16
 }
 
-//type TunnelRegistry struct {
-//	tunnels map[string]*Tunnel
-//	//affinity *cache.LRUCache
-//	sync.RWMutex
-//}
-//type ControlRegistry struct {
-//	controls map[string]*Control
-//	sync.RWMutex
-//}
-
+type Info struct{
+	TunReg  *TunnelRegistry
+	CtlReg *ControlRegistry
+	Opts      *Options
+	Listeners map[string]*conn.Listener
+}
 var (
 	tunnelRegistry  *TunnelRegistry
 	controlRegistry *ControlRegistry
@@ -43,10 +39,13 @@ var (
 	listeners map[string]*conn.Listener
 )
 
-func LogInfo() {
-	log.Info(tunnelRegistry.tunnels)
-	log.Info(controlRegistry.controls)
-	log.Info(listeners)
+func GetInfo() Info{
+	return Info{
+		tunnelRegistry,
+		controlRegistry,
+		opts,
+		listeners,
+	}
 }
 
 func Main() {

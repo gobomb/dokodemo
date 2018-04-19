@@ -4,13 +4,15 @@ import (
 	"doko/routers"
 	"github.com/gin-gonic/gin"
 	"github.com/qiniu/log"
+	"doko/cmd"
 )
+
 
 var (
 	serverWebAddress = "0.0.0.0:7777"
 )
 
-func startServerGin() {
+func StartServerGin() {
 	// 获取服务端 gin 实例
 	sGin := gin.Default()
 	// HTML 文件路由
@@ -24,5 +26,6 @@ func startServerGin() {
 }
 
 func main() {
-	startServerGin()
+	cmd.Execute(StartServerGin)
+	//startServerGin()
 }

@@ -4,6 +4,7 @@ import (
 	"doko/server"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"github.com/qiniu/log"
 )
 
 func StartServer(context *gin.Context) {
@@ -14,10 +15,12 @@ func StartServer(context *gin.Context) {
 }
 
 func GetInfo(context *gin.Context) {
-	server.GetInfo()
+	info:=server.GetInfo()
+	log.Println(info)
+	log.Info(info.CtlReg)
 
 }
 
-func GetIndex(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", gin.H{})
+func GetIndex(context *gin.Context) {
+	context.HTML(http.StatusOK, "index.html", gin.H{})
 }
