@@ -15,10 +15,11 @@ func StartServer(context *gin.Context) {
 }
 
 func GetInfo(context *gin.Context) {
-	info:=server.GetInfo()
+	info := server.GetInfo()
 	log.Println(info)
 	log.Info(info.CtlReg)
-
+	// 变量不可导出
+	context.JSON(200, info.CtlReg)
 }
 
 func GetIndex(context *gin.Context) {

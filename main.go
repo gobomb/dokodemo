@@ -19,6 +19,7 @@ func StartServerGin() {
 	sGin.LoadHTMLGlob("./front/view/*")
 	// 服务器路由
 	routers.ServerRouters(sGin)
+	routers.ClientRouters(sGin)
 	// 启动 gin
 	if err := sGin.Run(serverWebAddress); err != nil {
 		log.Println(err)

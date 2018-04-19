@@ -2,26 +2,41 @@ package cmd
 
 import (
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+	"github.com/qiniu/log"
 	"fmt"
 	"os"
 	"doko/server"
-	"log"
+	"doko/client"
 )
 
-var web func()
-
+var (
+	web  func()
+	role string
+)
 var rootCmd = &cobra.Command{
-	Use:   "doko-server",
+	Use:   "doko",
 	Short: "doko is a reverse proxy tool",
 	Long:  ``,
 }
 
 var runCmd = &cobra.Command{
-	Use:   "run",
+	Use:   "runS",
 	Short: "start the doko server",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
+		//if viper.config
 		server.Main()
+	},
+}
+
+var runClientCmd = &cobra.Command{
+	Use:"runC",
+	Short:"start the doko client",
+	Long:"",
+	Run:func(cmd *cobra.Command,args []string){
+		client.Main()
+
 	},
 }
 
@@ -36,8 +51,21 @@ var webCmd = &cobra.Command{
 }
 
 func init() {
+	cobra.OnInitialize(initConfig)
+	rootCmd.PersistentFlags().StringVarP(&role, "role", "r", "", "client or server (default is server")
+
 	rootCmd.AddCommand(runCmd)
 	rootCmd.AddCommand(webCmd)
+}
+
+func initConfig() {
+	if role != "" {
+		// Use config file from the flag.
+		viper.SetConfigFile(role)
+		log.Info(role)
+	}else{
+		viper.SetConfigFile("server")
+	}
 }
 
 func Execute(gin func()) {

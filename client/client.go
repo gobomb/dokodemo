@@ -1,4 +1,4 @@
-package main
+package client
 
 import (
 	"doko/conn"
@@ -41,7 +41,7 @@ type TunnelConfiguration struct {
 	RemotePort uint16            `yaml:"remote_port,omitempty"`
 }
 
-func main() {
+func Main() {
 	protocols := make(map[string]string)
 	//protocols["tcp"] = "192.168.2.20:80"
 	protocols["tcp"] = "0.0.0.0:22"

@@ -67,7 +67,6 @@ func Main() {
 func tunnelListener(addr string) {
 
 	listener := conn.Listen(addr)
-
 	log.Printf("Listening for control and proxy connections on %s", listener.Addr.String())
 	for c := range listener.Conns {
 		go func(tunnelConn conn.Conn) {
