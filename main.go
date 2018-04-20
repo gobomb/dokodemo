@@ -17,6 +17,9 @@ func StartServerGin() {
 	sGin := gin.Default()
 	// HTML 文件路由
 	sGin.LoadHTMLGlob("./front/view/*")
+	// 静态资源文件路由
+	sGin.Static("/css", "./front/css")
+	sGin.Static("/js", "./front/js")
 	// 服务器路由
 	routers.ServerRouters(sGin)
 	routers.ClientRouters(sGin)
