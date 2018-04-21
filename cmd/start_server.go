@@ -1,13 +1,13 @@
 package cmd
 
 import (
+	"doko/client"
+	"doko/server"
+	"fmt"
+	"github.com/qiniu/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/qiniu/log"
-	"fmt"
 	"os"
-	"doko/server"
-	"doko/client"
 )
 
 var (
@@ -31,10 +31,10 @@ var runCmd = &cobra.Command{
 }
 
 var runClientCmd = &cobra.Command{
-	Use:"runC",
-	Short:"start the doko client",
-	Long:"",
-	Run:func(cmd *cobra.Command,args []string){
+	Use:   "runC",
+	Short: "start the doko client",
+	Long:  "",
+	Run: func(cmd *cobra.Command, args []string) {
 		client.Main()
 
 	},
@@ -63,7 +63,7 @@ func initConfig() {
 		// Use config file from the flag.
 		viper.SetConfigFile(role)
 		log.Info(role)
-	}else{
+	} else {
 		viper.SetConfigFile("server")
 	}
 }

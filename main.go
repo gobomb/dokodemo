@@ -1,12 +1,11 @@
 package main
 
 import (
+	"doko/cmd"
 	"doko/routers"
 	"github.com/gin-gonic/gin"
 	"github.com/qiniu/log"
-	"doko/cmd"
 )
-
 
 var (
 	serverWebAddress = "0.0.0.0:7777"

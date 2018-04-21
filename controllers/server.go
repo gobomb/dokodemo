@@ -3,8 +3,8 @@ package controllers
 import (
 	"doko/server"
 	"github.com/gin-gonic/gin"
-	"net/http"
 	"github.com/qiniu/log"
+	"net/http"
 )
 
 func StartServer(context *gin.Context) {
@@ -17,9 +17,9 @@ func StartServer(context *gin.Context) {
 func GetInfo(context *gin.Context) {
 	info := server.GetInfo()
 	log.Println(info)
-	log.Info(info.CtlReg)
+	//log.Info(info.CtlReg)
 	// 变量不可导出
-	context.JSON(200, info.CtlReg)
+	context.JSON(200, info)
 }
 
 func GetIndex(context *gin.Context) {

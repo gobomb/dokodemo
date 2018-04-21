@@ -24,12 +24,6 @@ type ReqTunnel struct {
 	RemotePort uint16
 }
 
-type Info struct{
-	TunReg  *TunnelRegistry
-	CtlReg *ControlRegistry
-	Opts      *Options
-	Listeners map[string]*conn.Listener
-}
 var (
 	tunnelRegistry  *TunnelRegistry
 	controlRegistry *ControlRegistry
@@ -39,12 +33,24 @@ var (
 	listeners map[string]*conn.Listener
 )
 
-func GetInfo() Info{
+func GetInfo() Info {
+	var (
+		tuns []string
+		ctls []string
+	)
+	for k, _ := range tunnelRegistry.tunnels {
+		log.Info(k)
+		tuns = append(tuns, k)
+	}
+	for k, _ := range controlRegistry.controls {
+		log.Info(k)
+		ctls = append(ctls, k)
+	}
 	return Info{
-		tunnelRegistry,
-		controlRegistry,
-		opts,
-		listeners,
+		Tuns:       tuns,
+		Ctls:       ctls,
+		TunnelAddr: opts.tunnelAddr,
+		Domain:     opts.domain,
 	}
 }
 

@@ -1,9 +1,9 @@
 package routers
 
 import (
+	"doko/controllers"
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"doko/controllers"
 )
 
 func ClientRouters(engine *gin.Engine) {
@@ -13,7 +13,7 @@ func ClientRouters(engine *gin.Engine) {
 		//routerGroup.Static("/js", "./front/js")
 		//routerGroup.Static("/css", "./front/css")
 		//routerGroup.Handle(http.MethodGet, "index", controllers.GetIndex)
-		routerGroup.Handle(http.MethodGet, "start", controllers.ClientServer)
+		routerGroup.Handle(http.MethodGet, "status", controllers.ClientServer)
 		//routerGroup.Handle(http.MethodGet, "info", controllers.GetInfo)
 	}
 }
