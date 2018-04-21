@@ -37,36 +37,7 @@ var (
 	listeners map[string]*conn.Listener
 )
 
-func GetInfo() Info {
-	if !StatusOn {
-		return Info{Status: false}
-	}
-	var (
-		tuns []string
-		ctls []string
-	)
-	for k, _ := range tunnelRegistry.tunnels {
-		log.Info(k)
-		tuns = append(tuns, k)
-	}
-	for k, _ := range controlRegistry.controls {
-		log.Info(k)
-		ctls = append(ctls, k)
-	}
-	ls := 0
-	for k, _ := range listeners {
-		log.Infof("listener:%v", k)
-		ls++
-	}
-	return Info{
-		Status:     true,
-		Tuns:       tuns,
-		Ctls:       ctls,
-		TunnelAddr: opts.tunnelAddr,
-		Domain:     opts.domain,
-		consnum:    ls,
-	}
-}
+
 
 func Main(stopChan chan interface{}) {
 	StopChan = stopChan
