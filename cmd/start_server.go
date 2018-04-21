@@ -3,27 +3,36 @@ package cmd
 import (
 	"doko/client"
 	"doko/server"
+	"doko/util"
 	"fmt"
 	"github.com/qiniu/log"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"os"
+	"time"
 )
 
 var (
 	web  func()
 	role string
+	domain string
+	port string
 )
 var rootCmd = &cobra.Command{
 	Use:   "doko",
 	Short: "doko is a reverse proxy tool",
 	Long:  ``,
+	//Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		log.Info("out")
+	},
 }
 
-var runCmd = &cobra.Command{
-	Use:   "runS",
+var runServerCmd = &cobra.Command{
+	Use:   "runServer",
 	Short: "start the doko server",
 	Long:  ``,
+	//Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		//if viper.config
 		server.Main()
@@ -31,7 +40,7 @@ var runCmd = &cobra.Command{
 }
 
 var runClientCmd = &cobra.Command{
-	Use:   "runC",
+	Use:   "runClient",
 	Short: "start the doko client",
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
@@ -40,13 +49,25 @@ var runClientCmd = &cobra.Command{
 	},
 }
 
-var webCmd = &cobra.Command{
-	Use:   "web",
+var webDCmd = &cobra.Command{
+	Use:   "webd",
 	Short: "start the doko server web.",
+	Long:  ``,
+	//Args:  cobra.MinimumNArgs(2),
+	Run: func(cmd *cobra.Command, args []string) {
+		log.Println(port)
+		web()
+		log.Info("ok")
+	},
+}
+
+var webCCmd = &cobra.Command{
+	Use:   "webc",
+	Short: "start the doko client web.",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
 		log.Println(args)
-		web()
+		//web()
 	},
 }
 
@@ -54,11 +75,25 @@ func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&role, "role", "r", "", "client or server (default is server")
 
-	rootCmd.AddCommand(runCmd)
-	rootCmd.AddCommand(webCmd)
+	rootCmd.AddCommand(runServerCmd)
+	rootCmd.AddCommand(runClientCmd)
+	rootCmd.AddCommand(webDCmd)
+	rootCmd.PersistentFlags().StringVarP(&domain, "domain", "d", "0.0.0.0", "the public network address of the server")
+	rootCmd.PersistentFlags().StringVarP(&port, "port", "p", "4443", "the tunnel port of the server")
+
+	rootCmd.AddCommand(webCCmd)
 }
 
 func initConfig() {
+	redis:=util.RedisClient()
+	err := redis.Set("port", port, 5000 * time.Hour).Err()
+	if err != nil {
+		log.Printf("[initConfig]fail %v", err)
+	}
+	err = redis.Set("domain", domain, 5000 * time.Hour).Err()
+	if err != nil {
+		log.Printf("[initConfig]fail %v", err)
+	}
 	if role != "" {
 		// Use config file from the flag.
 		viper.SetConfigFile(role)

@@ -5,6 +5,7 @@ import (
 	"doko/routers"
 	"github.com/gin-gonic/gin"
 	"github.com/qiniu/log"
+	"doko/util"
 )
 
 var (
@@ -12,6 +13,7 @@ var (
 )
 
 func StartServerGin() {
+
 	// 获取服务端 gin 实例
 	sGin := gin.Default()
 	// HTML 文件路由
@@ -29,6 +31,7 @@ func StartServerGin() {
 }
 
 func main() {
+	util.StartUp()
 	cmd.Execute(StartServerGin)
 	//startServerGin()
 }
