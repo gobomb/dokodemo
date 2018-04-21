@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"doko/client"
 	"doko/util"
 	"doko/server"
 	"fmt"
@@ -13,10 +12,10 @@ import (
 )
 
 var (
-	web    func()
-	role   string
-	domain string
-	port   string
+	web      func()
+	role     string
+	domain   string
+	port     string
 	StopChan chan interface{}
 )
 var rootCmd = &cobra.Command{
@@ -35,7 +34,7 @@ var runServerCmd = &cobra.Command{
 	Long:  ``,
 	//Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		StopChan=util.NewChan()
+		StopChan = util.NewChan()
 		server.Main(StopChan)
 	},
 }
@@ -50,17 +49,6 @@ var runServerCmd = &cobra.Command{
 //	},
 //}
 
-var runClientCmd = &cobra.Command{
-	Use:   "runClient",
-	Short: "start the doko client",
-	Long:  "",
-	Run: func(cmd *cobra.Command, args []string) {
-		stopChanC :=util.NewChan()
-		client.Main(stopChanC)
-
-	},
-}
-
 var webDCmd = &cobra.Command{
 	Use:   "webd",
 	Short: "start the doko server web.",
@@ -73,27 +61,17 @@ var webDCmd = &cobra.Command{
 	},
 }
 
-var webCCmd = &cobra.Command{
-	Use:   "webc",
-	Short: "start the doko client web.",
-	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
-		log.Println(args)
-		//web()
-	},
-}
+
 
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.PersistentFlags().StringVarP(&role, "role", "r", "", "client or server (default is server")
 
 	rootCmd.AddCommand(runServerCmd)
-	rootCmd.AddCommand(runClientCmd)
 	rootCmd.AddCommand(webDCmd)
 	rootCmd.PersistentFlags().StringVarP(&domain, "domain", "d", "0.0.0.0", "the public network address of the server")
 	rootCmd.PersistentFlags().StringVarP(&port, "port", "p", "4443", "the tunnel port of the server")
 
-	rootCmd.AddCommand(webCCmd)
 }
 
 func initConfig() {
