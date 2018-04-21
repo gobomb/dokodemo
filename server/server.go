@@ -96,6 +96,10 @@ func tunnelListener(addr string) {
 
 	go func() {
 		<-StopChan
+		for k,v:=range tunnelRegistry.tunnels{
+			log.Infof("Closing tunnel listener: %v",k)
+			v.listener.Close()
+		}
 		StatusOn = false
 		listener.Shutdown.Begin()
 	}()

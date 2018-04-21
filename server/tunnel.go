@@ -92,7 +92,6 @@ func (t *Tunnel) listenTcp(listener *net.TCPListener) {
 			if atomic.LoadInt32(&t.closing) == 1 {
 				return
 			}
-
 			log.Printf("Failed to accept new TCP conn: %v", err)
 			continue
 		}

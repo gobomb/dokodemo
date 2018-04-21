@@ -55,7 +55,8 @@ var runClientCmd = &cobra.Command{
 	Short: "start the doko client",
 	Long:  "",
 	Run: func(cmd *cobra.Command, args []string) {
-		client.Main()
+		stopChanC :=util.NewChan()
+		client.Main(stopChanC)
 
 	},
 }

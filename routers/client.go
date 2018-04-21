@@ -13,7 +13,8 @@ func ClientRouters(engine *gin.Engine) {
 		//routerGroup.Static("/js", "./front/js")
 		//routerGroup.Static("/css", "./front/css")
 		//routerGroup.Handle(http.MethodGet, "index", controllers.GetIndex)
-		routerGroup.Handle(http.MethodGet, "status", controllers.ClientServer)
+		routerGroup.Handle(http.MethodGet, "status-on", controllers.ClientServer)
+		routerGroup.Handle(http.MethodGet, "status-off", controllers.StopClient)
 		//routerGroup.Handle(http.MethodGet, "info", controllers.GetInfo)
 	}
 }

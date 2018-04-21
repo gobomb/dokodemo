@@ -10,7 +10,6 @@ import (
 	"strings"
 	"sync/atomic"
 	"time"
-	"os"
 )
 
 const (
@@ -42,7 +41,11 @@ type TunnelConfiguration struct {
 	RemotePort uint16            `yaml:"remote_port,omitempty"`
 }
 
-func Main() {
+var StopChan chan interface{}
+
+func Main(stopChan chan interface{}) {
+	StopChan = stopChan
+
 	protocols := make(map[string]string)
 	//protocols["tcp"] = "192.168.2.20:80"
 	protocols["tcp"] = "0.0.0.0:22"
@@ -100,15 +103,21 @@ func (c *ClientModel) control() {
 	var err error
 	//var err error
 
-	ctlConn,err = conn.Dial(c.serverAddr, "ctl")
-	if err!=nil{
-		log.Warnf("Dial the pub server err: %v ; exit()",err)
-		os.Exit(-1)
+	ctlConn, err = conn.Dial(c.serverAddr, "ctl")
+	if err != nil {
+		log.Warnf("Dial the pub server err: %v ; exit()", err)
+		return
+		// os.Exit(-1)
 	}
 
 	c.auth(ctlConn)
 
 	c.reqTunnel(ctlConn)
+
+	go func() {
+		<-StopChan
+		ctlConn.Close()
+	}()
 
 	c.mainControlLoop(ctlConn)
 
@@ -119,7 +128,7 @@ func (c *ClientModel) proxy() {
 		err        error
 	)
 
-	remoteConn,err = conn.Dial(c.serverAddr, "pxy")
+	remoteConn, err = conn.Dial(c.serverAddr, "pxy")
 	if err != nil {
 		log.Errorf("Failed to establish proxy connection: %v", err)
 		return
@@ -143,8 +152,8 @@ func (c *ClientModel) proxy() {
 	}
 
 	//start := time.Now()
-	localConn,err := conn.Dial(tunnel.LocalAddr, "prv")
-	if err!=nil{
+	localConn, err := conn.Dial(tunnel.LocalAddr, "prv")
+	if err != nil {
 		log.Warnf("Failed to open private log %s: %v", tunnel.LocalAddr, err)
 		return
 	}
@@ -158,7 +167,8 @@ func (c *ClientModel) mainControlLoop(ctlConn conn.Conn) {
 	for {
 		var rawMsg msg.Message
 		if rawMsg, err = msg.ReadMsg(ctlConn); err != nil {
-			panic(err)
+			log.Errorf("read masg from connection to the server error : %v", err)
+			return
 		}
 
 		switch m := rawMsg.(type) {
