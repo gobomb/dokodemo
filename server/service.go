@@ -17,6 +17,7 @@ type InfoTunnel struct {
 }
 
 type Info struct {
+	Status     bool
 	Tuns       []string
 	Ctls       []string
 	TunnelAddr string

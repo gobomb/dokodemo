@@ -204,8 +204,8 @@ func (c *Control) reader() {
 				log.Println("EOF")
 				return
 			} else {
-				log.Printf("[msg.ReadMsg] %v", err)
-				panic(err)
+				log.Errorf("[msg.ReadMsg] %v", err)
+				//(err)
 			}
 		} else {
 			c.in <- msg

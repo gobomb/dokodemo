@@ -39,7 +39,7 @@ var (
 
 func GetInfo() Info {
 	if !StatusOn {
-		return Info{}
+		return Info{Status: false}
 	}
 	var (
 		tuns []string
@@ -59,6 +59,7 @@ func GetInfo() Info {
 		ls++
 	}
 	return Info{
+		Status:     true,
 		Tuns:       tuns,
 		Ctls:       ctls,
 		TunnelAddr: opts.tunnelAddr,
@@ -99,8 +100,8 @@ func tunnelListener(addr string) {
 		<-StopChan
 
 		// 关闭与各个客户端的代理连接
-		for k,v:=range controlRegistry.controls{
-			log.Printf("Closing control %v",k)
+		for k, v := range controlRegistry.controls {
+			log.Printf("Closing control %v", k)
 			v.shutdown.Begin()
 		}
 		//for k,v:=range tunnelRegistry.tunnels{
@@ -110,7 +111,7 @@ func tunnelListener(addr string) {
 		// 将服务状态更改为false
 		StatusOn = false
 		// 关闭监听
-		listener.Shutdown.Begin()
+		//listener.Shutdown.Begin()
 	}()
 
 	for c := range listener.Conns {
