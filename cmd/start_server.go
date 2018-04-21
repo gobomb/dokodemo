@@ -40,15 +40,15 @@ var runServerCmd = &cobra.Command{
 	},
 }
 
-var stopServerCmd = &cobra.Command{
-	Use:   "stopServer",
-	Short: "stop the doko server",
-	Long:  ``,
-	//Args:  cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		StopChan<-1
-	},
-}
+//var stopServerCmd = &cobra.Command{
+//	Use:   "stopServer",
+//	Short: "stop the doko server",
+//	Long:  ``,
+//	//Args:  cobra.MinimumNArgs(1),
+//	Run: func(cmd *cobra.Command, args []string) {
+//		StopChan<-1
+//	},
+//}
 
 var runClientCmd = &cobra.Command{
 	Use:   "runClient",

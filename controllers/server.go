@@ -8,17 +8,24 @@ import (
 	"doko/util"
 )
 
-
+var (
+	StopChan   chan interface{}
+	stopOkChan chan interface{}
+	//startOkChan
+)
 
 func StartServer(context *gin.Context) {
-
-	go server.Main(util.StopChan)
+	StopChan = util.NewChan()
+	//startOkChan := util.NewChan()
+	//stopOkChan = util.NewChan()
+	go server.Main(StopChan)
 
 	context.JSON(200, "start server success")
 }
 
 func StopServer(context *gin.Context) {
-	util.StopChan<-1
+	StopChan <- 1
+	//<-stopOkChan
 	context.JSON(200, "stop server success")
 }
 

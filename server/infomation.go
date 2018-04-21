@@ -21,5 +21,5 @@ type Info struct {
 	Ctls       []string
 	TunnelAddr string
 	Domain     string
-	Listeners  map[string]string
+	consnum    int
 }

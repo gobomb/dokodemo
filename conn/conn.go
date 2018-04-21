@@ -48,35 +48,36 @@ func (c *loggedConn) CloseRead() error {
 	return c.tcp.CloseRead()
 }
 
-func (l *Listener) stopper() {
+func (l *Listener) stopper(listener net.Listener) {
 
 	l.Shutdown.WaitBegin()
+	listener.Close()
 	log.Info("Starting to stop the listener and shutdown:")
 	close(l.Conns)
 	l.Shutdown.Complete()
 	log.Printf("The main goroutine Shutdown complete")
 }
 
-func Listen(addr string) (l *Listener) {
+func Listen(addr string) (*Listener, error){
 
 	listener, err := net.Listen("tcp", addr)
 	if err != nil {
 		log.Debugf("[net.Listen tcp failed:]%v", err)
-		return
+		return nil,err
 	}
-	l = &Listener{
+	l := &Listener{
 		Addr:     listener.Addr(),
 		Conns:    make(chan *loggedConn),
 		Shutdown: util.NewShutdown(),
 	}
-	go l.stopper()
+	go l.stopper(listener)
 
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {
 				log.Warnf("Accept error:%v", err)
-				listener.Close()
 			}
+			listener.Close()
 		}()
 		for {
 
@@ -94,7 +95,7 @@ func Listen(addr string) (l *Listener) {
 			l.Conns <- c
 		}
 	}()
-	return
+	return l,nil
 }
 
 func Dial(addr, typ string) (*loggedConn, error) {

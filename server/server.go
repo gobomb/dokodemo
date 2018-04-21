@@ -12,6 +12,8 @@ const (
 	connReadTimeout = 10 * time.Second
 )
 
+var StatusOn bool
+
 var StopChan chan interface{}
 
 type Options struct {
@@ -36,6 +38,9 @@ var (
 )
 
 func GetInfo() Info {
+	if !StatusOn {
+		return Info{}
+	}
 	var (
 		tuns []string
 		ctls []string
@@ -48,11 +53,17 @@ func GetInfo() Info {
 		log.Info(k)
 		ctls = append(ctls, k)
 	}
+	ls := 0
+	for k, _ := range listeners {
+		log.Infof("listener:%v", k)
+		ls++
+	}
 	return Info{
 		Tuns:       tuns,
 		Ctls:       ctls,
 		TunnelAddr: opts.tunnelAddr,
 		Domain:     opts.domain,
+		consnum:    ls,
 	}
 }
 
@@ -70,16 +81,22 @@ func Main(stopChan chan interface{}) {
 		controls: make(map[string]*Control),
 	}
 	listeners = make(map[string]*conn.Listener)
+	StatusOn = true
 	tunnelListener(opts.tunnelAddr)
 }
 
 func tunnelListener(addr string) {
 
-	listener := conn.Listen(addr)
+	listener, err := conn.Listen(addr)
+	if err != nil {
+		log.Errorf("listen err: %v", err)
+		return
+	}
 	log.Printf("Listening for control and proxy connections on %s", listener.Addr.String())
 
 	go func() {
 		<-StopChan
+		StatusOn = false
 		listener.Shutdown.Begin()
 	}()
 
