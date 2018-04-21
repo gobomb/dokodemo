@@ -94,13 +94,22 @@ func tunnelListener(addr string) {
 	}
 	log.Printf("Listening for control and proxy connections on %s", listener.Addr.String())
 
+	// 等待来自 http 网关的停止消息
 	go func() {
 		<-StopChan
-		for k,v:=range tunnelRegistry.tunnels{
-			log.Infof("Closing tunnel listener: %v",k)
-			v.listener.Close()
+
+		// 关闭与各个客户端的代理连接
+		for k,v:=range controlRegistry.controls{
+			log.Printf("Closing control %v",k)
+			v.shutdown.Begin()
 		}
+		//for k,v:=range tunnelRegistry.tunnels{
+		//	log.Infof("Closing tunnel listener: %v",k)
+		//	v.listener.Close()
+		//}
+		// 将服务状态更改为false
 		StatusOn = false
+		// 关闭监听
 		listener.Shutdown.Begin()
 	}()
 

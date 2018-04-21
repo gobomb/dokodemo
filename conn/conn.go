@@ -48,9 +48,12 @@ func (c *loggedConn) CloseRead() error {
 	return c.tcp.CloseRead()
 }
 
+// listener 关闭的清理动作
 func (l *Listener) stopper(listener net.Listener) {
 
 	l.Shutdown.WaitBegin()
+
+
 	listener.Close()
 	log.Info("Starting to stop the listener and shutdown:")
 	close(l.Conns)
