@@ -11,7 +11,8 @@ func ServerRouters(engine *gin.Engine) {
 	{
 		routerGroup.Handle(http.MethodGet,"demo",controllers.Demo)
 		routerGroup.Handle(http.MethodGet, "index", controllers.GetIndex)
-		routerGroup.Handle(http.MethodGet, "status", controllers.StartServer)
+		routerGroup.Handle(http.MethodGet, "status-on", controllers.StartServer)
+		routerGroup.Handle(http.MethodGet, "status-off", controllers.StopServer)
 		routerGroup.Handle(http.MethodGet, "info", controllers.GetInfo)
 	}
 }

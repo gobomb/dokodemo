@@ -7,6 +7,7 @@ import (
 	"math/rand"
 	"net"
 	"sync"
+	"doko/util"
 )
 
 type Conn interface {
@@ -25,7 +26,8 @@ type loggedConn struct {
 
 type Listener struct {
 	net.Addr
-	Conns chan *loggedConn
+	Conns    chan *loggedConn
+	Shutdown *util.Shutdown
 }
 
 func (c *loggedConn) Id() string {
@@ -46,6 +48,15 @@ func (c *loggedConn) CloseRead() error {
 	return c.tcp.CloseRead()
 }
 
+func (l *Listener) stopper() {
+
+	l.Shutdown.WaitBegin()
+	log.Info("Starting to stop the listener and shutdown:")
+	close(l.Conns)
+	l.Shutdown.Complete()
+	log.Printf("The main goroutine Shutdown complete")
+}
+
 func Listen(addr string) (l *Listener) {
 
 	listener, err := net.Listen("tcp", addr)
@@ -54,12 +65,21 @@ func Listen(addr string) (l *Listener) {
 		return
 	}
 	l = &Listener{
-		Addr:  listener.Addr(),
-		Conns: make(chan *loggedConn),
+		Addr:     listener.Addr(),
+		Conns:    make(chan *loggedConn),
+		Shutdown: util.NewShutdown(),
 	}
+	go l.stopper()
 
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Warnf("Accept error:%v", err)
+				listener.Close()
+			}
+		}()
 		for {
+
 			rawConn, err := listener.Accept()
 			if err != nil {
 				log.Debugf("Failed to accept new TCP connection : %v", err)
@@ -77,12 +97,12 @@ func Listen(addr string) (l *Listener) {
 	return
 }
 
-func Dial(addr, typ string) *loggedConn {
+func Dial(addr, typ string) (*loggedConn, error) {
 	var rawConn net.Conn
 	rawConn, err := net.Dial("tcp", addr)
 	if err != nil {
 		log.Debugf("[net.Dial error]: %v", err)
-		return nil
+		return nil, err
 	}
 
 	conn := &loggedConn{
@@ -94,7 +114,7 @@ func Dial(addr, typ string) *loggedConn {
 
 	log.Debugf("New connection to: %v", rawConn.RemoteAddr())
 
-	return conn
+	return conn, nil
 }
 
 func Join(c Conn, c2 Conn) (int64, int64) {

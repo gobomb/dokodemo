@@ -4,6 +4,10 @@ import (
 	"sync"
 )
 
+//var StopChan chan interface{}
+//func init() {
+//	StopChan = make(chan interface{})
+//}
 // A small utility class for managing controlled shutdowns
 type Shutdown struct {
 	sync.Mutex

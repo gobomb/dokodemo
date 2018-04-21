@@ -12,6 +12,8 @@ const (
 	connReadTimeout = 10 * time.Second
 )
 
+var StopChan chan interface{}
+
 type Options struct {
 	tunnelAddr string
 	domain     string
@@ -54,7 +56,8 @@ func GetInfo() Info {
 	}
 }
 
-func Main() {
+func Main(stopChan chan interface{}) {
+	StopChan = stopChan
 	log.Print("start!")
 	opts = &Options{
 		tunnelAddr: ":4443",
@@ -74,6 +77,12 @@ func tunnelListener(addr string) {
 
 	listener := conn.Listen(addr)
 	log.Printf("Listening for control and proxy connections on %s", listener.Addr.String())
+
+	go func() {
+		<-StopChan
+		listener.Shutdown.Begin()
+	}()
+
 	for c := range listener.Conns {
 		go func(tunnelConn conn.Conn) {
 			defer func() {

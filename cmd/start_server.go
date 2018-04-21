@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"doko/client"
-	"doko/server"
 	"doko/util"
+	"doko/server"
 	"fmt"
 	"github.com/qiniu/log"
 	"github.com/spf13/cobra"
@@ -13,10 +13,11 @@ import (
 )
 
 var (
-	web  func()
-	role string
+	web    func()
+	role   string
 	domain string
-	port string
+	port   string
+	StopChan chan interface{}
 )
 var rootCmd = &cobra.Command{
 	Use:   "doko",
@@ -34,8 +35,18 @@ var runServerCmd = &cobra.Command{
 	Long:  ``,
 	//Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		//if viper.config
-		server.Main()
+		StopChan=util.NewChan()
+		server.Main(StopChan)
+	},
+}
+
+var stopServerCmd = &cobra.Command{
+	Use:   "stopServer",
+	Short: "stop the doko server",
+	Long:  ``,
+	//Args:  cobra.MinimumNArgs(1),
+	Run: func(cmd *cobra.Command, args []string) {
+		StopChan<-1
 	},
 }
 
@@ -85,12 +96,12 @@ func init() {
 }
 
 func initConfig() {
-	redis:=util.RedisClient()
-	err := redis.Set("port", port, 5000 * time.Hour).Err()
+	redis := util.RedisClient()
+	err := redis.Set("port", port, 5000*time.Hour).Err()
 	if err != nil {
 		log.Printf("[initConfig]fail %v", err)
 	}
-	err = redis.Set("domain", domain, 5000 * time.Hour).Err()
+	err = redis.Set("domain", domain, 5000*time.Hour).Err()
 	if err != nil {
 		log.Printf("[initConfig]fail %v", err)
 	}

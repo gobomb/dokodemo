@@ -10,6 +10,7 @@ import (
 	"strings"
 	"sync/atomic"
 	"time"
+	"os"
 )
 
 const (
@@ -96,9 +97,14 @@ func (c *ClientModel) control() {
 	//	}
 	//}()
 	var ctlConn conn.Conn
+	var err error
 	//var err error
 
-	ctlConn = conn.Dial(c.serverAddr, "ctl")
+	ctlConn,err = conn.Dial(c.serverAddr, "ctl")
+	if err!=nil{
+		log.Warnf("Dial the pub server err: %v ; exit()",err)
+		os.Exit(-1)
+	}
 
 	c.auth(ctlConn)
 
@@ -113,7 +119,7 @@ func (c *ClientModel) proxy() {
 		err        error
 	)
 
-	remoteConn = conn.Dial(c.serverAddr, "pxy")
+	remoteConn,err = conn.Dial(c.serverAddr, "pxy")
 	if err != nil {
 		log.Errorf("Failed to establish proxy connection: %v", err)
 		return
@@ -137,7 +143,11 @@ func (c *ClientModel) proxy() {
 	}
 
 	//start := time.Now()
-	localConn := conn.Dial(tunnel.LocalAddr, "prv")
+	localConn,err := conn.Dial(tunnel.LocalAddr, "prv")
+	if err!=nil{
+		log.Warnf("Failed to open private log %s: %v", tunnel.LocalAddr, err)
+		return
+	}
 	defer localConn.Close()
 	//locConn = wrapcon
 	conn.Join(localConn, remoteConn)
