@@ -14,6 +14,10 @@ func StartServer(context *gin.Context) {
 	context.JSON(200, "start server success")
 }
 
+func Demo(context *gin.Context){
+	context.HTML(http.StatusOK,"demo.html",gin.H{})
+}
+
 func GetInfo(context *gin.Context) {
 	info := server.GetInfo()
 	log.Println(info)
