@@ -16,8 +16,7 @@ var (
 
 func StartServer(context *gin.Context) {
 	StopChan = util.NewChan()
-	//startOkChan := util.NewChan()
-	//stopOkChan = util.NewChan()
+
 	go server.Main(StopChan)
 
 	context.JSON(200, "start server success")
