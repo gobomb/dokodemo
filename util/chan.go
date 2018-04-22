@@ -1,7 +1,6 @@
 package util
 
-
-func NewChan()chan interface{}{
-	c := make(chan interface{})
+func NewChan(i int) chan interface{} {
+	c := make(chan interface{}, i)
 	return c
 }

@@ -34,7 +34,7 @@ var runServerCmd = &cobra.Command{
 	Long:  ``,
 	//Args:  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		StopChan = util.NewChan()
+		StopChan = util.NewChan(0)
 		server.Main(StopChan)
 	},
 }

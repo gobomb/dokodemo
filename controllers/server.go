@@ -9,23 +9,35 @@ import (
 )
 
 var (
-	StopChan   chan interface{}
-	stopOkChan chan interface{}
+	StopChan chan interface{}
+	onceChan chan interface{}
 	//startOkChan
 )
 
+func init() {
+	onceChan = util.NewChan(1)
+}
+
 func StartServer(context *gin.Context) {
-	StopChan = util.NewChan()
-
-	go server.Main(StopChan)
-
-	context.JSON(200, "start server success")
+	select {
+	case onceChan <- 1:
+		StopChan = util.NewChan(0)
+		go server.Main(StopChan)
+		context.JSON(200, "start server success")
+	default:
+		context.JSON(200, "the server has started")
+	}
 }
 
 func StopServer(context *gin.Context) {
-	StopChan <- 1
-	//<-stopOkChan
-	context.JSON(200, "stop server success")
+	select {
+	case <-onceChan:
+		StopChan <- 1
+		context.JSON(200, "stop server success")
+	default:
+		context.JSON(200, "the server has stopped")
+	}
+
 }
 
 func Demo(context *gin.Context) {

@@ -10,7 +10,7 @@ import (
 
 // 测试 状态返回
 func TestStartServer(t *testing.T) {
-	StopChan = util.NewChan()
+	StopChan = util.NewChan(0)
 	go server.Main(StopChan)
 	time.Sleep(4 * time.Second)
 	info := server.GetInfo()

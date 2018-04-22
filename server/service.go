@@ -25,7 +25,7 @@ type Info struct {
 	Ctls       []string
 	TunnelAddr string
 	Domain     string
-	consnum    int
+	Consnum    int
 }
 
 func GetInfo() Info {
@@ -55,6 +55,6 @@ func GetInfo() Info {
 		Ctls:       ctls,
 		TunnelAddr: opts.tunnelAddr,
 		Domain:     opts.domain,
-		consnum:    ls,
+		Consnum:    ls,
 	}
 }
