@@ -6,6 +6,9 @@ import (
 	"github.com/qiniu/log"
 	"net/http"
 	"doko/util"
+	"os"
+	"fmt"
+	"time"
 )
 
 var (
@@ -15,6 +18,7 @@ var (
 )
 
 func init() {
+	procMap = make(map[int]*os.Process)
 	onceChan = util.NewChan(1)
 }
 
@@ -54,4 +58,52 @@ func GetInfo(context *gin.Context) {
 
 func GetIndex(context *gin.Context) {
 	context.HTML(http.StatusOK, "index.html", gin.H{})
+}
+
+func Gotty(context *gin.Context) {
+	pid := execShell()
+	context.JSON(200, pid)
+}
+
+func StopGotty(context *gin.Context) {
+	var pid int
+	context.Bind(pid)
+	stopShell(pid)
+	context.JSON(200, pid)
+}
+
+var procMap map[int]*os.Process
+
+func stopShell(pid int) {
+	process := procMap[pid]
+	time.Sleep(10 * time.Second)
+	if err := process.Kill(); err != nil {
+		log.Error(err)
+	}
+	log.Print("kill success")
+}
+
+func execShell() int {
+	// 1) os.StartProcess //
+	/*********************/
+	/* Linux: */
+	env := os.Environ()
+	procAttr := &os.ProcAttr{
+		Env: env,
+		Files: []*os.File{
+			os.Stdin,
+			os.Stdout,
+			os.Stderr,
+		},
+	}
+	// 1st example: list files
+	process, err := os.StartProcess("/Users/cym/go/bin/gotty", []string{"", "-c", "a:b", "zsh"}, procAttr)
+	if err != nil {
+		fmt.Printf("Error %v starting process!", err) //
+		os.Exit(1)
+	}
+	log.Printf("The process id is %v", process)
+	procMap[process.Pid] = process
+	return process.Pid
+
 }
