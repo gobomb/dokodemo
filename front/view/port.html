@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
+		<title>Doko Proxy Server Dashboard</title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+	</head>
+	<body>
+	<!--导航-->
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+					<span class="sr-only">切换导航</span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+					<span class="icon-bar"></span>
+				</button>
+				<a href="index" class="navbar-brand">服务端面板</a>
+			</div>
+			<div class="navbar-collapse collapse ">
+				<ul class="nav navbar-nav">
+					<li><a href="client"><span class="glyphicon glyphicon-tasks"></span>&nbsp;&nbsp;客户端管理</a></li>
+	                <li class="active"><a href="port"><span class="glyphicon glyphicon-list-alt"></span>&nbsp;&nbsp;端口管理</a></li>
+				</ul>
+				<ul class="nav navbar-nav navbar-right">
+					<li class="dropdown">
+						  <a id="dLabel" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						    admin
+						    <span class="caret"></span>
+						  </a>
+						  <ul class="dropdown-menu" aria-labelledby="dLabel">
+						          <li><a href="client"><span class="glyphicon glyphicon-screenshot"></span>&nbsp;&nbsp;客户端管理</a></li>
+		                        <li><a href="port"><span class="glyphicon glyphicon-user"></span>&nbsp;&nbsp;端口管理</a></li>
+						  </ul>
+					</li>		
+				</ul>
+			</div>		
+		</div>
+	</nav>
+	
+	<div class="container">
+		<div class="col-md-2">
+			<ul class="list-group">
+				<a href="#" class="list-group-item active">端口管理</a>
+				<a href="content-post" class="list-group-item">添加内容</a>
+		    </ul>
+		</div>
+		<div class="col-md-10">
+			      <div class="page-header">
+				  <h1>端口管理</h1>
+				</div>
+				<ul class="nav nav-tabs">
+				  <li role="presentation" class="active"><a href="#">端口列表</a></li>
+				 </ul>
+				<table class="table">
+				    <thead>
+						<tr>
+							<th>端口</th>
+	                        <th>端口类型</th>
+	                        <th>操作</th>
+	                        <th>监听状态</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">4443</th>
+	                        <td>公共端口</td>
+	                        <td>
+	                        	<div class="dropdown">
+								  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" >
+								    操作
+								    <span class="caret"></span>
+								  </button>
+								  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								    <li><a href="#">关闭端口监听</a></li>
+								    <!-- <li><a href="#">查看隧道信息</a></li> -->
+								    <li role="presentation"><a href="" role="button"  data-toggle="modal" data-target="#myModal">查看端口信息</a></li>
+
+								    <!-- <li><a href="#">锁定</a></li>
+								    <li><a href="#">修改密码</a></li> -->
+								  </ul>
+								</div>
+	                        </td>
+	                        <td>on</td>
+						</tr>
+						<tr>
+							<th scope="row">1</th>
+	                        <td>张三</td>
+	                        <td>123456789@maiziedu.com</td>
+	                        <td>
+	                        	<div class="dropdown">
+								  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" >
+								    操作
+								    <span class="caret"></span>
+								  </button>
+								  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								    <li><a href="#">编辑</a></li>
+								    <li><a href="#">删除</a></li>
+								    <li><a href="#">锁定</a></li>
+								    <li><a href="#">修改密码</a></li>
+								  </ul>
+								</div>
+	                        </td>
+						</tr>
+					</tbody>
+				</table>
+				<nav class="pull-right">
+				  <ul class="pagination">
+				    <li class="disabled">
+				      <a href="#" aria-label="Previous">
+				        <span aria-hidden="true">&laquo;</span>
+				      </a>
+				    </li>
+				    <li class="active"><a href="#">1</a></li>
+				    <li>
+				      <a href="#" aria-label="Next">
+				        <span aria-hidden="true">&raquo;</span>
+				      </a>
+				    </li>
+				  </ul>
+				</nav>
+		</div>
+	</div>
+
+
+<!-- Modal -->
+	<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">端口信息</h4>
+	      </div>
+	      
+<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>隧道ID</th>
+	                        <th>代理地址</th>
+	                        <th>内网服务地址</th>
+	                        <th>状态</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">1</th>
+	                        <td>1.1.1.1:11</td>
+	                        <td>192.168.1.1:99</td>
+	                        <td>on</td>
+						</tr>
+						<tr>
+							<th scope="row">2</th>
+	                        <td>1.1.1.1:11</td>
+	                        <td>192.168.1.1:22</td>
+	                        <td>off</td>
+						</tr>
+					</tbody>
+				</table>
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th>客户端ID</th>
+	                        <th>隧道数量</th>
+	                        <th>状态</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th scope="row">1</th>
+	                        <td>3</td>
+	                        <td>on</td>
+						</tr>
+						<tr>
+							<th scope="row">2</th>
+	                        <td>1.1.1.1:11</td>
+	                        <td>192.168.1.1:22</td>
+	                        <td>off</td>
+						</tr>
+					</tbody>
+				</table>
+				<div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+	        <button type="button" class="btn btn-primary">提交</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
+	
+	<!--footer-->
+	<footer>
+	    <div class="container">
+	        <div class="row">
+	            <div class="col-md-12">
+	                <p>
+	                     Copyright&nbsp;©&nbsp;2018&nbsp;&nbsp;gobomb.github.io&nbsp;&nbsp;
+	                </p>
+	            </div>
+	        </div>
+	    </div>
+	</footer>
+	<!--footer-->
+		
+	<script src="js/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/bootstrap.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript">
+      
+	</script>
+	</body>
+</html>

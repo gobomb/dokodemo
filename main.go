@@ -21,6 +21,7 @@ func StartServerGin() {
 	// 静态资源文件路由
 	sGin.Static("/css", "./front/css")
 	sGin.Static("/js", "./front/js")
+	sGin.Static("/fonts","./front/fonts")
 	// 服务器路由
 	routers.ServerRouters(sGin)
 	// 启动 gin

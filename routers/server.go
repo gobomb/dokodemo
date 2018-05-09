@@ -7,13 +7,16 @@ import (
 )
 
 func ServerRouters(engine *gin.Engine) {
-	routerGroup := engine.Group("/server")
-	{
-		routerGroup.Handle(http.MethodGet,"demo",controllers.Demo)
-		routerGroup.Handle(http.MethodGet, "index", controllers.GetIndex)
-		routerGroup.Handle(http.MethodGet, "status-on", controllers.StartServer)
-		routerGroup.Handle(http.MethodGet, "status-off", controllers.StopServer)
-		routerGroup.Handle(http.MethodGet, "info", controllers.GetInfo)
-		routerGroup.Handle(http.MethodGet,"gotty",controllers.Gotty)
-	}
+    // 页面路由
+	engine.Handle(http.MethodGet, "/", controllers.GetIndex)
+	engine.Handle(http.MethodGet,"ports",controllers.GetPortPage)
+	engine.Handle(http.MethodGet, "index", controllers.GetIndex)
+	engine.Handle(http.MethodGet, "clients", controllers.GetClientPage)
+
+	// 接口路由
+	engine.Handle(http.MethodGet, "status-on", controllers.StartServer)
+	engine.Handle(http.MethodGet, "status-off", controllers.StopServer)
+	engine.Handle(http.MethodGet, "info", controllers.GetInfo)
+	engine.Handle(http.MethodGet,"gotty",controllers.Gotty)
+
 }

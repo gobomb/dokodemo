@@ -44,9 +44,15 @@ func StopServer(context *gin.Context) {
 
 }
 
-func Demo(context *gin.Context) {
-	context.HTML(http.StatusOK, "demo.html", gin.H{})
+func GetPortPage(context *gin.Context) {
+	context.HTML(http.StatusOK, "port.html", gin.H{})
 }
+
+
+func GetClientPage(context *gin.Context) {
+	context.HTML(http.StatusOK, "client.html", gin.H{})
+}
+
 
 func GetInfo(context *gin.Context) {
 	info := server.GetInfo()
@@ -57,7 +63,7 @@ func GetInfo(context *gin.Context) {
 }
 
 func GetIndex(context *gin.Context) {
-	context.HTML(http.StatusOK, "index.html", gin.H{})
+	context.HTML(http.StatusOK, "client.html", gin.H{})
 }
 
 func Gotty(context *gin.Context) {
