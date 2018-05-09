@@ -9,9 +9,9 @@ import (
 func ServerRouters(engine *gin.Engine) {
     // 页面路由
 	engine.Handle(http.MethodGet, "/", controllers.GetIndex)
-	engine.Handle(http.MethodGet,"ports",controllers.GetPortPage)
+	engine.Handle(http.MethodGet,"port",controllers.GetPortPage)
 	engine.Handle(http.MethodGet, "index", controllers.GetIndex)
-	engine.Handle(http.MethodGet, "clients", controllers.GetClientPage)
+	engine.Handle(http.MethodGet, "client", controllers.GetClientPage)
 
 	// 接口路由
 	engine.Handle(http.MethodGet, "status-on", controllers.StartServer)

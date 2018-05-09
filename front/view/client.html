@@ -6,8 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
 		<title>Doko Proxy Server Dashboard</title>
 		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
-		<link rel="stylesheet" type="text/css" href="http://bootswatch.com/slate/bootstrap.min.css"/>
 		<link rel="stylesheet" type="text/css" href="css/style.css"/>
+		<link rel="stylesheet" type="text/css" href="css/light.css"/>
 	</head>
 	<body>
 	<!--导航-->
@@ -52,35 +52,96 @@
 	<div class="container">
 		<div class="col-md-2">
 			<ul class="list-group">
-				<a href="#" class="list-group-item active">客户端管理</a>
-				<!-- <a href="user_search.html" class="list-group-item">客户端搜索</a> -->
+				<a href="#" class="list-group-item active">状态监控</a>
+				<a href="user_search.html" class="list-group-item">客户端搜索</a>
 				<!-- <a href="#" role="button"  class="list-group-item" data-toggle="modal" data-target="#myModal">添加客户端</a> -->
 			</ul>
 		</div>
+
 		<div class="col-md-10">
+	 		<div class="page-header">
+	 			<h1>API服务状态 <span class="light green" tabindex="0"></span></h1>
+	        </div>
+	    </div>
+
+		<div class="col-md-10">
+	 		<div class="page-header">
+	 			<h1>服务器管理</h1>
+	        </div>
+	        <ul class="nav nav-tabs">
+				  <li role="presentation" class="active"><a href="#">服务器列表</a></li>
+				  <!-- <li role="presentation"><a href="user_search.html">客户端搜索</a></li> -->
+				   <li role="presentation"><a href="" role="button"  data-toggle="modal" data-target="#addServerModal">添加服务器</a></li>
+				</ul>
+				<table class="table table-hover"  style="text-align: center;">
+					<thead>
+						<tr>
+							<th style="text-align: center;">服务器ID</th>
+	                        <th style="text-align: center;">服务器地址</th>
+	                        <th style="text-align: center;">服务器端口</th>
+	                        <th style="text-align: center;">操作</th>
+	                        <th style="text-align: center;">服务器状态</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1</td>
+	                        <td>1.1.1.1</td>
+	                        <td>:9999</td>
+	                        <td>
+	                        	<div class="dropdown line-div">
+								  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" >
+								    操作
+								    <span class="caret"></span>
+								  </button>
+								  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+								    <li><a href="#">关闭服务器</a></li>
+								    <!-- <li><a href="#">查看隧道信息</a></li> -->
+								    <li role="presentation"><a href="" role="button"  data-toggle="modal" data-target="#myModal">删除服务器</a></li>
+
+								    <!-- <li><a href="#">锁定</a></li>
+								    <li><a href="#">修改密码</a></li> -->
+								  </ul>
+								</div>
+	                        </td>
+	                        <td>
+	                        	<span class="light green"></span>
+	                        </td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+		</div>
+
+
+
+
+
+		<div class="col-md-10 col-md-offset-2">
 			    <div class="page-header">
 				  <h1>客户端管理</h1>
 				</div>
 				<ul class="nav nav-tabs">
 				  <li role="presentation" class="active"><a href="#">客户端列表</a></li>
 				  <!-- <li role="presentation"><a href="user_search.html">客户端搜索</a></li> -->
-				   <!-- <li role="presentation"><a href="" role="button"  data-toggle="modal" data-target="#myModal">添加客户端</a></li> -->
+				  
 				</ul>
-				<table class="table table-hover">
+				<table class="table table-hover"  style="text-align: center;">
 					<thead>
 						<tr>
-							<th>客户端ID</th>
-	                        <th>隧道数量</th>
-	                        <th>操作</th>
-	                        <th>控制连接状态</th>
+							<th style="text-align: center;">客户端ID</th>
+	                        <th style="text-align: center;">隧道数量</th>
+	                        <th style="text-align: center;">操作</th>
+	                        <th style="text-align: center;">控制连接状态</th>
 						</tr>
 					</thead>
 					<tbody>
 						<tr>
-							<th scope="row">1</th>
+							<td>1</td>
 	                        <td>4</td>
 	                        <td>
-	                        	<div class="dropdown">
+	                        	<div class="dropdown line-div">
 								  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" >
 								    操作
 								    <span class="caret"></span>
@@ -95,25 +156,31 @@
 								  </ul>
 								</div>
 	                        </td>
-	                        <td>on</td>
+	                        <td>
+	                        	<span class="light green"></span>
+	                        </td>
 						</tr>
 						<tr>
-							<th scope="row">1</th>
-	                        <td>张三</td>
-	                        <td>123456789@maiziedu.com</td>
+							<td>2</td>
+	                        <td>5</td>
 	                        <td>
-	                        	<div class="dropdown">
+	                        	<div class="dropdown line-div">
 								  <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" >
 								    操作
 								    <span class="caret"></span>
 								  </button>
 								  <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-								    <li><a href="#">编辑</a></li>
-								    <li><a href="#">删除</a></li>
-								    <li><a href="#">锁定</a></li>
-								    <li><a href="#">修改密码</a></li>
+								    <li><a href="#">关闭控制连接</a></li>
+								    <!-- <li><a href="#">查看隧道信息</a></li> -->
+								    <li role="presentation"><a href="" role="button"  data-toggle="modal" data-target="#myModal">查看隧道信息</a></li>
+
+								    <!-- <li><a href="#">锁定</a></li>
+								    <li><a href="#">修改密码</a></li> -->
 								  </ul>
 								</div>
+	                        </td>
+	                        <td>
+	                        	<span class="light red"></span>
 	                        </td>
 						</tr>
 					</tbody>
@@ -126,8 +193,7 @@
 				      </a>
 				    </li>
 				    <li class="active"><a href="#">1</a></li>
-				    <li><a href="#">2</a></li>
-				    <li><a href="#">3</a></li>
+				    
 				    <li>
 				      <a href="#" aria-label="Next">
 				        <span aria-hidden="true">&raquo;</span>
@@ -161,47 +227,61 @@
 							<th scope="row">1</th>
 	                        <td>1.1.1.1:11</td>
 	                        <td>192.168.1.1:99</td>
-	                        <td>on</td>
+	                        <td><span class="light green"></span></td>
 						</tr>
 						<tr>
 							<th scope="row">2</th>
 	                        <td>1.1.1.1:11</td>
 	                        <td>192.168.1.1:22</td>
-	                        <td>off</td>
+	                        <td><span class="light red"></span></td>
 						</tr>
 					</tbody>
 				</table>
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+<!-- 	        <button type="button" class="btn btn-primary">提交</button>
+ -->	      </div>
+	    </div>
+	  </div>
+	</div>
+	
+
+
+	<!-- addServerModal -->
+	<div class="modal fade" id="addServerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-header">
+	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+	        <h4 class="modal-title" id="myModalLabel">隧道信息</h4>
+	      </div>
 	      
-	   <!--    <div class="modal-body">
+	      
+	      <div class="modal-body">
 	        <form action="#">
                 <div class="form-group">
-                    <label for="addname">用户名</label>
-                    <input type="text" id="addname" class="form-control" placeholder="用户名">
+                    <label for="addname">服务器名称</label>
+                    <input type="text" id="addname" class="form-control" placeholder="服务器名称">
                 </div>
                 <div class="form-group">
-                    <label for="addpassword">用户密码</label>
-                    <input type="text" id="addpassword" class="form-control" placeholder="请输入用户密码">
+                    <label for="addpassword">服务器公网IP</label>
+                    <input type="text" id="addpassword" class="form-control" placeholder="请输入服务器IP">
                 </div>
                 <div class="form-group">
-                    <label for="addpassword1">确认用户密码</label>
-                    <input type="text" id="addpassword1" class="form-control" placeholder="请确认输入用户密码">
+                    <label for="addpassword1">服务器端口</label>
+                    <input type="text" id="addpassword1" class="form-control" placeholder="请输入服务器端口">
                 </div>
+               
                 <div class="form-group">
-                    <label for="addemail">请输入用户邮箱</label>
-                    <input type="email" id="addemail" class="form-control" placeholder="请输入用户邮箱">
-                </div>
-                <div class="form-group">
-                    <label for="addyonghuzu">所属用户组</label>
+                    <label for="addyonghuzu">服务器类型</label>
                     <select id="addyonghuzu" class="form-control">
                         <option>限制会员</option>
                         <option>新手上路</option>
-                        <option>组册会员</option>
-                        <option>中级会员</option>
-                        <option>高级会员</option>
+                       
                     </select>
                 </div>
              </form>
-	      </div> -->
+	      </div>
 	      <div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
 	        <button type="button" class="btn btn-primary">提交</button>
@@ -209,7 +289,11 @@
 	    </div>
 	  </div>
 	</div>
-	
+
+
+
+
+
 	<!--footer-->
 	<footer>
 	    <div class="container">

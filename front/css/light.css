@@ -1,0 +1,15 @@
+.light{
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+.red{
+    background: red;
+}
+.green{
+    background: green;
+}
+.line-div{
+    display: inline-block;
+}
