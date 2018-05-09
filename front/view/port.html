@@ -4,7 +4,7 @@
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1 , user-scalable=no">
-		<title>Doko Proxy Server Dashboard</title>
+		<title>Server Dashboard</title>
 		<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
 		<link rel="stylesheet" type="text/css" href="css/style.css"/>
 		<link rel="stylesheet" type="text/css" href="css/light.css"/>
@@ -86,7 +86,7 @@
 					<tbody>
 						<tr>
 							<td>4443</td>
-							<td>2.2.2.2</td>
+							<td>1.1.1.1</td>
 	                        <td>公共端口</td>
 	                        <td>
 	                        	<div class="dropdown line-div">
@@ -110,8 +110,8 @@
 						</tr>
 						
 						<tr>
-							<td>5555</td>
-							<td>2.2.2.2</td>
+							<td>9022</td>
+							<td>1.1.1.1</td>
 	                        <td>代理端口</td>
 	                        <td>
 	                        	<div class="dropdown line-div">
@@ -160,7 +160,7 @@
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title" id="myModalLabel">端口信息</h4>
+	        <h4 class="modal-title" id="myModalLabel">代理端口信息</h4>
 	      </div>
 	      
 		<table class="table table-hover">
@@ -175,17 +175,17 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td>1</td>
-							<td>2</td>
-	                        <td>1.1.1.1:11</td>
-	                        <td>192.168.1.1:99</td>
+							<td>t002</td>
+							<td>c001</td>
+	                        <td>1.1.1.1:9022</td>
+	                        <td>192.168.1.2:22</td>
 	                        <td><span class="light green"></span></td>
 						</tr>
 						<tr>
-							<td>2</td>
-							<td>3</td>
-	                        <td>1.1.1.1:11</td>
-	                        <td>192.168.1.1:22</td>
+							<td>t001</td>
+							<td>c001</td>
+	                        <td>1.1.1.1:9080</td>
+	                        <td>192.168.1.1:80</td>
 	                        <td><span class="light green"></span></td>
 						</tr>
 					</tbody>
@@ -193,7 +193,7 @@
 				
 				<div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-	        <button type="button" class="btn btn-primary">提交</button>
+	        <!-- <button type="button" class="btn btn-primary">提交</button> -->
 	      </div>
 	    </div>
 	  </div>
@@ -204,7 +204,7 @@
 	    <div class="modal-content">
 	      <div class="modal-header">
 	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title" id="myModalLabel">端口信息</h4>
+	        <h4 class="modal-title" id="myModalLabel">公共端口信息</h4>
 	      </div>
 	      
 		<table class="table table-hover">
@@ -217,69 +217,26 @@
 					</thead>
 					<tbody>
 						<tr>
-							<td>1</td>
-	                        <td>3</td>
+							<td>c001</td>
+	                        <td>2</td>
 	                        <td><span class="light green"></span></td>
 						</tr>
 						<tr>
-							<td>1</td>
-	                        <td>3</td>
-	                        <td><span class="light green"></span></td>
+							<td>c002</td>
+	                        <td>1</td>
+	                        <td><span class="light red"></span></td>
 						</tr>
 					</tbody>
 				</table>
 				
 				<div class="modal-footer">
 	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-	        <button type="button" class="btn btn-primary">提交</button>
+	        <!-- <button type="button" class="btn btn-primary">提交</button> -->
 	      </div>
 	    </div>
 	  </div>
 	</div>
 
-
-<!-- addPortModal -->
-<div class="modal fade" id="addPortModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-	        <h4 class="modal-title" id="myModalLabel">隧道信息</h4>
-	      </div>
-	      
-	      
-	      <div class="modal-body">
-	        <form action="#">
-                <div class="form-group">
-                    <label for="addname">服务器名称</label>
-                    <input type="text" id="addname" class="form-control" placeholder="服务器名称">
-                </div>
-                <div class="form-group">
-                    <label for="addpassword">服务器公网IP</label>
-                    <input type="text" id="addpassword" class="form-control" placeholder="请输入服务器IP">
-                </div>
-                <div class="form-group">
-                    <label for="addpassword1">服务器端口</label>
-                    <input type="text" id="addpassword1" class="form-control" placeholder="请输入服务器端口">
-                </div>
-               
-                <div class="form-group">
-                    <label for="addyonghuzu">服务器类型</label>
-                    <select id="addyonghuzu" class="form-control">
-                        <option>限制会员</option>
-                        <option>新手上路</option>
-                       
-                    </select>
-                </div>
-             </form>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
-	        <button type="button" class="btn btn-primary">提交</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
 
 
 	
