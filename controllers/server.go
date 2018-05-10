@@ -27,9 +27,9 @@ func StartServer(context *gin.Context) {
 	case onceChan <- 1:
 		StopChan = util.NewChan(0)
 		go server.Main(StopChan)
-		context.JSON(200, "start server success")
+		context.JSON(200, true)
 	default:
-		context.JSON(200, "the server has started")
+		context.JSON(200,false)
 	}
 }
 
@@ -37,9 +37,9 @@ func StopServer(context *gin.Context) {
 	select {
 	case <-onceChan:
 		StopChan <- 1
-		context.JSON(200, "stop server success")
+		context.JSON(200, true)
 	default:
-		context.JSON(200, "the server has stopped")
+		context.JSON(200, false)
 	}
 
 }

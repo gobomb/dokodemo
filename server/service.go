@@ -20,6 +20,7 @@ type InfoTunnel struct {
 }
 
 type Info struct {
+	IP         string
 	Status     bool
 	Tuns       []string
 	Ctls       []string
@@ -29,7 +30,7 @@ type Info struct {
 }
 
 func GetInfo() Info {
-	if !StatusOn {
+	if !S.StatusOn {
 		return Info{Status: false}
 	}
 	var (
@@ -50,6 +51,7 @@ func GetInfo() Info {
 		ls++
 	}
 	return Info{
+		IP:         "120.78.62.175",
 		Status:     true,
 		Tuns:       tuns,
 		Ctls:       ctls,

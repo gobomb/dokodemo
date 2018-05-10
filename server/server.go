@@ -6,13 +6,20 @@ import (
 	"github.com/qiniu/log"
 	"runtime/debug"
 	"time"
+	"sync"
 )
 
 const (
 	connReadTimeout = 10 * time.Second
 )
-
-var StatusOn bool
+type Status struct{
+	StatusOn bool
+	sync.Mutex
+	}
+var S = Status{
+	StatusOn:false,
+}
+//var
 
 var StopChan chan interface{}
 
@@ -53,7 +60,9 @@ func Main(stopChan chan interface{}) {
 		controls: make(map[string]*Control),
 	}
 	listeners = make(map[string]*conn.Listener)
-	StatusOn = true
+	S.Lock()
+	S.StatusOn=true
+	S.Unlock()
 	tunnelListener(opts.tunnelAddr)
 }
 
@@ -69,18 +78,21 @@ func tunnelListener(addr string) {
 	// 等待来自 http 网关的停止消息
 	go func() {
 		<-StopChan
-
 		// 关闭与各个客户端的代理连接
 		for k, v := range controlRegistry.controls {
 			log.Printf("Closing control %v", k)
 			v.shutdown.Begin()
+			v.shutdown.WaitComplete()
 		}
 		//for k,v:=range tunnelRegistry.tunnels{
 		//	log.Infof("Closing tunnel listener: %v",k)
 		//	v.listener.Close()
 		//}
 		// 将服务状态更改为false
-		StatusOn = false
+		S.Lock()
+		S.StatusOn=false
+		S.Unlock()
+		//StatusOn = false
 		// 关闭监听
 		//listener.Shutdown.Begin()
 	}()
