@@ -138,57 +138,53 @@
                 <th style="text-align: center;">控制连接状态</th>
             </tr>
             </thead>
-            <tbody>
-            <tr>
-                <td id="client-id">c001</td>
-                <td id="tunnel-number">2</td>
-                <td>
-                    <div class="dropdown line-div">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
-                                data-toggle="dropdown">
-                            操作
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a href="#">关闭控制连接</a></li>
-                            <!-- <li><a href="#">查看隧道信息</a></li> -->
-                            <li role="presentation"><a href="" role="button" data-toggle="modal" data-target="#myModal">查看隧道信息</a>
-                            </li>
+            <tbody id="clients">
+            {{/*<tr>*/}}
+                {{/*<td id="client-id">c001</td>*/}}
+                {{/*<td id="tunnel-number">2</td>*/}}
+                {{/*<td>*/}}
+                    {{/*<div class="dropdown line-div">*/}}
+                        {{/*<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"*/}}
+                                {{/*data-toggle="dropdown">*/}}
+                            {{/*操作*/}}
+                            {{/*<span class="caret"></span>*/}}
+                        {{/*</button>*/}}
+                        {{/*<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">*/}}
+                            {{/*<li><a href="#">关闭控制连接</a></li>*/}}
+                            {{/*<li role="presentation"><a href="" role="button" data-toggle="modal" data-target="#myModal">查看隧道信息</a>*/}}
+                            {{/*</li>*/}}
+                        {{/*</ul>*/}}
+                    {{/*</div>*/}}
+                {{/*</td>*/}}
+                {{/*<td>*/}}
+                    {{/*<span class="light green" id="client-status"></span>*/}}
+                {{/*</td>*/}}
+            {{/*</tr>*/}}
+            {{/*<tr>*/}}
+                {{/*<td>c002</td>*/}}
+                {{/*<td>1</td>*/}}
+                {{/*<td>*/}}
+                    {{/*<div class="dropdown line-div">*/}}
+                        {{/*<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"*/}}
+                                {{/*data-toggle="dropdown">*/}}
+                            {{/*操作*/}}
+                            {{/*<span class="caret"></span>*/}}
+                        {{/*</button>*/}}
+                        {{/*<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">*/}}
+                            {{/*<li><a href="#">关闭控制连接</a></li>*/}}
+                            {{/*<!-- <li><a href="#">查看隧道信息</a></li> -->*/}}
+                            {{/*<li role="presentation"><a href="" role="button" data-toggle="modal" data-target="#myModal">查看隧道信息</a>*/}}
+                            {{/*</li>*/}}
 
-                            <!-- <li><a href="#">锁定</a></li>
-                            <li><a href="#">修改密码</a></li> -->
-                        </ul>
-                    </div>
-                </td>
-                <td>
-                    <span class="light green" id="client-status"></span>
-                </td>
-            </tr>
-            <tr>
-                <td>c002</td>
-                <td>1</td>
-                <td>
-                    <div class="dropdown line-div">
-                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1"
-                                data-toggle="dropdown">
-                            操作
-                            <span class="caret"></span>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                            <li><a href="#">关闭控制连接</a></li>
-                            <!-- <li><a href="#">查看隧道信息</a></li> -->
-                            <li role="presentation"><a href="" role="button" data-toggle="modal" data-target="#myModal">查看隧道信息</a>
-                            </li>
-
-                            <!-- <li><a href="#">锁定</a></li>
-                            <li><a href="#">修改密码</a></li> -->
-                        </ul>
-                    </div>
-                </td>
-                <td>
-                    <span class="light red"></span>
-                </td>
-            </tr>
+                            {{/*<!-- <li><a href="#">锁定</a></li>*/}}
+                            {{/*<li><a href="#">修改密码</a></li> -->*/}}
+                        {{/*</ul>*/}}
+                    {{/*</div>*/}}
+                {{/*</td>*/}}
+                {{/*<td>*/}}
+                    {{/*<span class="light red"></span>*/}}
+                {{/*</td>*/}}
+            {{/*</tr>*/}}
             </tbody>
         </table>
         <nav class="pull-right">
