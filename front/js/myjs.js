@@ -1,12 +1,11 @@
 console.log($("#clients>tr>td#client-id").text())
 
 
-
 function appendClient(key) {
     var clientId;
-    clientId=arrayCtl[key];
+    clientId = arrayCtl[key];
     str = "  <tr id='client' new=true>\n" +
-        "                <td id='client-id'>"+clientId+
+        "                <td id='client-id'>" + clientId +
         "</td>\n" +
         "                <td id='tunnel-number'>2</td>\n" +
         "                <td>\n" +
@@ -57,7 +56,7 @@ setInterval(function () {
     getInfo();
 }, 2000);
 
-Ctls=new Array();
+Ctls = new Array();
 
 // 更新服务器状态
 function getInfo() {
@@ -78,12 +77,12 @@ function getInfo() {
 
         if (arrayCtl != null) {
             for (var key in  arrayCtl) {
-                i=Ctls.indexOf(arrayCtl[key])
+                i = Ctls.indexOf(arrayCtl[key])
                 // console.log(i);
-                if (i==-1){
+                if (i == -1) {
                     Ctls.push(arrayCtl[key])
                     appendClient(key)
-                }else{
+                } else {
 
                 }
                 ;

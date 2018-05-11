@@ -53,8 +53,8 @@ func NewTunnel(m *msg.ReqTunnel, ctl *Control) (t *Tunnel) {
 		bindTcp := func(port int) {
 			t.listener, err = net.ListenTCP("tcp", &net.TCPAddr{IP: net.ParseIP("0.0.0.0"), Port: port})
 			if err != nil {
-				err = fmt.Errorf("Error binding TCP listener: %v\n", err)
-				log.Println(err)
+				e:= fmt.Sprintf("Error binding TCP listener: %v\n", err)
+				log.Println(e)
 				//return err
 			}
 			addr := t.listener.Addr().(*net.TCPAddr)
